@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrtosalonTj - Личный кабинет</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- JsBarcode библиотека для генерации настоящих штрихкодов -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="auth-form" id="authForm">
+            <h1>OrtosalonTj</h1>
+            <div class="form-step active" id="phoneStep">
+                <h2>Введите номер телефона</h2>
+                <div class="phone-input-container">
+                    <select id="countryCode" class="country-select">
+                        <option value="+992" selected>🇹🇯 +992</option>
+                        <option value="+7">🇷🇺 +7</option>
+                        <option value="+1">🇺🇸 +1</option>
+                        <option value="+49">🇩🇪 +49</option>
+                        <option value="+33">🇫🇷 +33</option>
+                        <option value="+44">🇬🇧 +44</option>
+                    </select>
+                    <input type="tel" id="phoneNumber" placeholder="Номер телефона" required>
+                </div>
+                <button onclick="sendVerificationCode()" class="btn-primary">Получить код</button>
+                <div id="phoneError" class="error-message"></div>
+            </div>
+
+            <div class="form-step" id="codeStep">
+                <h2>Введите код подтверждения</h2>
+                <p id="sentToNumber"></p>
+                <input type="text" id="verificationCode" placeholder="Код из SMS" maxlength="6">
+                <button onclick="verifyCode()" class="btn-primary">Подтвердить</button>
+                <button onclick="resendCode()" class="btn-secondary">Отправить код повторно</button>
+                <div id="codeError" class="error-message"></div>
+            </div>
+        </div>
+
+        <div class="user-dashboard" id="userDashboard" style="display: none;">
+            <div class="dashboard-header">
+                <h1>Добро пожаловать!</h1>
+                <button onclick="logout()" class="btn-logout">Выйти</button>
+            </div>
+            
+            <div class="profile-section">
+                <h2>Профиль</h2>
+                <div class="profile-info">
+                    <div class="info-item">
+                        <label>Имя:</label>
+                        <input type="text" id="userName" placeholder="Введите ваше имя">
+                    </div>
+                    <div class="info-item">
+                        <label>Телефон:</label>
+                        <input type="text" id="userPhone" readonly>
+                    </div>
+                    <button onclick="updateProfile()" class="btn-primary">Сохранить</button>
+                </div>
+            </div>
+
+            <div class="barcode-section">
+                <h2>Ваша карта лояльности</h2>
+                <div class="barcode-container">
+                    <svg id="barcodeDisplay"></svg>
+                    <div class="barcode-number" id="barcodeNumber"></div>
+                    <p class="barcode-info">Покажите этот штрихкод при покупке для получения скидки</p>
+                    <p class="barcode-scan-info">💡 Этот штрихкод можно сканировать обычными сканерами</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
