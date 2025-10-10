@@ -323,6 +323,99 @@ async function saveUserChanges() {
     }
 }
 
+// ========== Добавление пользователя ==========
+
+// Открыть модальное окно для добавления
+function openAddUserModal() {
+    document.getElementById('addUserName').value = '';
+    document.getElementById('addUserPhone').value = '';
+    document.getElementById('addUserEAN').value = generateEAN13();
+    document.getElementById('addBarcodePreview').innerHTML = '';
+    document.getElementById('addUserModal').classList.add('active');
+}
+
+// Генерация случайного штрихкода EAN-13
+function generateEAN13() {
+    let code = '';
+    for (let i = 0; i < 12; i++) {
+        code += Math.floor(Math.random() * 10);
+    }
+    // Контрольная сумма
+    let sum = 0;
+    for (let i = 0; i < 12; i++) {
+        const digit = parseInt(code[i]);
+        sum += (i % 2 === 0) ? digit : digit * 3;
+    }
+    const checkDigit = (10 - (sum % 10)) % 10;
+    return code + checkDigit;
+}
+
+// Отображение предпросмотра загруженного изображения
+function previewAddBarcodeImage() {
+    const fileInput = document.getElementById('addBarcodeImage');
+    const preview = document.getElementById('addBarcodePreview');
+    if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = `<img src="${e.target.result}" alt="Штрихкод" style="max-width:150px;">`;
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+    }
+}
+
+// Сохранение нового пользователя
+function addNewUser() {
+    const name = document.getElementById('addUserName').value.trim();
+    const phone = document.getElementById('addUserPhone').value.trim();
+    const eanCode = document.getElementById('addUserEAN').value.trim();
+    let barcodeImageData = null;
+
+    // Валидация
+    if (!phone) {
+        alert('Телефон обязателен');
+        return;
+    }
+    if (eanCode.length !== 13) {
+        alert('EAN-13 должен содержать 13 цифр');
+        return;
+    }
+
+    const fileInput = document.getElementById('addBarcodeImage');
+    if (fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            barcodeImageData = e.target.result;
+            saveUser();
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+    } else {
+        saveUser();
+    }
+
+    function saveUser() {
+        const users = JSON.parse(localStorage.getItem('admin_users') || '[]');
+        const newUser = {
+            id: Date.now(),
+            name,
+            phone,
+            eanCode,
+            barcodeImage: barcodeImageData,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        };
+        users.push(newUser);
+        localStorage.setItem('admin_users', JSON.stringify(users));
+        closeAddUserModal();
+        loadUsers(); // Функция для обновления списка на экране
+        alert('Пользователь добавлен!');
+    }
+}
+
+// Закрыть модалку добавления
+function closeAddUserModal() {
+    document.getElementById('addUserModal').classList.remove('active');
+}
+
 // ОБНОВЛЁННАЯ функция удаления пользователя с облачной синхронизацией
 async function confirmDeleteUser() {
     const userId = parseInt(document.getElementById('deleteUserId').value);
