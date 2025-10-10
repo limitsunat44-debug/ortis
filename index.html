@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OrtosalonTj - Личный кабинет</title>
+    <title> orto - Личный кабинет</title>
     <link rel="stylesheet" href="styles.css">
     <!-- JsBarcode библиотека для генерации настоящих штрихкодов -->
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
@@ -11,17 +11,12 @@
 <body>
     <div class="container">
         <div class="auth-form" id="authForm">
-            <h1>OrtosalonTj</h1>
+            <h1>orto - личный кабинет</h1>
             <div class="form-step active" id="phoneStep">
                 <h2>Введите номер телефона</h2>
                 <div class="phone-input-container">
                     <select id="countryCode" class="country-select">
                         <option value="+992" selected>🇹🇯 +992</option>
-                        <option value="+7">🇷🇺 +7</option>
-                        <option value="+1">🇺🇸 +1</option>
-                        <option value="+49">🇩🇪 +49</option>
-                        <option value="+33">🇫🇷 +33</option>
-                        <option value="+44">🇬🇧 +44</option>
                     </select>
                     <input type="tel" id="phoneNumber" placeholder="Номер телефона" required>
                 </div>
@@ -61,12 +56,11 @@
             </div>
 
             <div class="barcode-section">
-                <h2>Ваша карта лояльности</h2>
+                <h2>Покажите этот штрихкод при покупке для получения скидки в -10%</h2>
                 <div class="barcode-container">
                     <svg id="barcodeDisplay"></svg>
                     <div class="barcode-number" id="barcodeNumber"></div>
                     <p class="barcode-info">Покажите этот штрихкод при покупке для получения скидки</p>
-                    <p class="barcode-scan-info">💡 Этот штрихкод можно сканировать обычными сканерами</p>
                 </div>
             </div>
         </div>
