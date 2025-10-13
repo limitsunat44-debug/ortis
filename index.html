@@ -52,7 +52,69 @@
         <div class="user-dashboard" id="userDashboard" style="display: none;">
             <div class="dashboard-header">
                 <h1>Добро пожаловать!</h1>
-                <button onclick="logout()" class="btn-logout">Выйти</button>
+                <!-- Слайдер продуктов -->
+		<div class="products-slider">
+    			<h3>Популярные товары</h3>
+    			<div class="slider-container">
+       			 <button class="slider-btn prev-btn" aria-label="Предыдущий слайд">
+           		 <i class="fas fa-chevron-left"></i>
+      			  </button>
+        	<div class="slider-wrapper">
+           	<div class="slider-items">
+                	<!-- Продукт 1 -->
+                	<div class="product-card">
+			<a href="https://ortosalon.tj/product/polusfery-igolchatye-dlya-profilaktiki-ploskostopiya" target="_blank"> 
+                    	<img src="https://static.insales-cdn.com/images/products/1/2157/953018477/Ортопедические_стельки__11_.png" alt="Полусферы массажные" class="product-image">
+                	</a>    
+			<div class="product-info">
+                        <h4 class="product-title">Полусферы массажные</h4>
+                        <p class="product-price">150TJS от 2шт.</p>
+                        <a href="https://ortosalon.tj/product/polusfery-igolchatye-dlya-profilaktiki-ploskostopiya" target="_blank" class="btn-primary btn-sm">На сайт</a>
+                    	</div>
+                	</div>
+                <!-- Продукт 2 -->
+                <div class="product-card">
+		<a href="https://ortosalon.tj/product/detskie-botinki-tutubi-3617-kr-bot" target="_blank"> 
+                    <img src="https://static.insales-cdn.com/images/products/1/1545/2369553929/New_Collection__3_.png" alt="Детские ботинки" class="product-image">
+                </a>    
+			<div class="product-info">
+                        <h4 class="product-title">Детские ботинки</h4>
+                        <p class="product-price">540 TJS</p>
+                        <a href="https://ortosalon.tj/product/detskie-botinki-tutubi-3617-kr-bot" target="_blank" class="btn-primary btn-sm">На сайт</a>
+                    </div>
+                </div>
+                <!-- Продукт 3 -->
+                <div class="product-card">
+		<a href="https://ortosalon.tj/product/ortopedicheskie-botinki-ortosalon-k-500-r12" target="_blank"> 
+                    <img src="https://static.insales-cdn.com/images/products/1/6589/950786493/Дизайн_без_названия_-_2024-12-23T162730.898.png" alt="Орто Ботинки" class="product-image">
+                </a>    
+			<div class="product-info">
+                        <h4 class="product-title">Орто Ботинки</h4>
+                        <p class="product-price">525 TJS</p>
+                        <a href="https://ortosalon.tj/product/ortopedicheskie-botinki-ortosalon-k-500-r12" target="_blank" class="btn-primary btn-sm">На сайт</a>
+                    </div>
+                </div>
+
+                <!-- Продукт 4 -->
+                <div class="product-card">
+		<a href="https://ortosalon.tj/product/zhenskie-zamshevye-botinki-imac-657651-kapuchino" target="_blank"> 
+                    <img src="https://static.insales-cdn.com/images/products/1/4911/953701167/Ортопедические_стельки-5.png" alt="Женские Ботинки" class="product-image">
+                </a>    
+			<div class="product-info">
+                        <h4 class="product-title">Ботинки Imac</h4>
+                        <p class="product-price">1240 TJS</p>
+                        <a href="https://ortosalon.tj/product/zhenskie-zamshevye-botinki-imac-657651-kapuchino" target="_blank" class="btn-primary btn-sm">На сайт</a>
+                        </div>
+                	</div>
+            </div>
+        </div>
+        <button class="slider-btn next-btn" aria-label="Следующий слайд">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+    <div class="slider-dots"></div>
+</div>
+                
             </div>
             
             <div class="profile-section">
@@ -91,6 +153,7 @@
                     </a>
                 </div>
             </div>
+                    <button onclick="logout()" class="btn-logout">Выйти</button>
                 </div>
             </div>
         </div>
