@@ -310,6 +310,106 @@ async function verifyCode() {
     }
 }
 
+// JavaScript для слайдера продуктов
+document.addEventListener('DOMContentLoaded', function() {
+    const slider = document.querySelector('.slider-items');
+    const prevBtn = document.querySelector('.prev-btn');
+    const nextBtn = document.querySelector('.next-btn');
+    const dotsContainer = document.querySelector('.slider-dots');
+    
+    if (!slider || !prevBtn || !nextBtn) return;
+    
+    const slides = document.querySelectorAll('.product-card');
+    const totalSlides = slides.length;
+    let currentIndex = 0;
+    const slidesPerView = getSlidesPerView();
+    
+    // Создаем точки навигации
+    createDots();
+    
+    // Инициализация слайдера
+    updateSlider();
+    
+    // Обработчики событий
+    prevBtn.addEventListener('click', showPrevSlide);
+    nextBtn.addEventListener('click', showNextSlide);
+    
+    // Обновление количества слайдов при изменении размера окна
+    window.addEventListener('resize', () => {
+        const newSlidesPerView = getSlidesPerView();
+        if (newSlidesPerView !== slidesPerView) {
+            updateSlider();
+        }
+    });
+    
+    // Обработчики для точек
+    document.querySelectorAll('.slider-dot').forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            currentIndex = index;
+            updateSlider();
+        });
+    });
+    
+    function getSlidesPerView() {
+        if (window.innerWidth <= 480) return 1;
+        if (window.innerWidth <= 768) return 2;
+        return 4; // Десктоп
+    }
+    
+    function updateSlider() {
+        const translateX = -currentIndex * (100 / slidesPerView);
+        slider.style.transform = `translateX(${translateX}%)`;
+        
+        // Обновляем активную точку
+        updateDots();
+        
+        // Обновляем состояние кнопок
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex >= totalSlides - slidesPerView;
+        
+        // Добавляем/удаляем классы для навигации
+        prevBtn.classList.toggle('disabled', currentIndex === 0);
+        nextBtn.classList.toggle('disabled', currentIndex >= totalSlides - slidesPerView);
+    }
+    
+    function showPrevSlide() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateSlider();
+        }
+    }
+    
+    function showNextSlide() {
+        if (currentIndex < totalSlides - slidesPerView) {
+            currentIndex++;
+            updateSlider();
+        }
+    }
+    
+    function createDots() {
+        if (!dotsContainer) return;
+        
+        dotsContainer.innerHTML = '';
+        const dotsCount = Math.max(1, totalSlides - slidesPerView + 1);
+        
+        for (let i = 0; i < dotsCount; i++) {
+            const dot = document.createElement('div');
+            dot.classList.add('slider-dot');
+            if (i === 0) dot.classList.add('active');
+            dot.dataset.index = i;
+            dotsContainer.appendChild(dot);
+        }
+    }
+    
+    function updateDots() {
+        const dots = document.querySelectorAll('.slider-dot');
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentIndex);
+        });
+    }
+});
+
+
 // Создание нового пользователя
 function createNewUser(phone) {
     const userId = Date.now();
