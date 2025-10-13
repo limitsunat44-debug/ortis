@@ -415,7 +415,6 @@ pre code {
 .btn--primary {
   background: var(--color-primary);
   color: var(--color-btn-primary-text);
-  margin: 10px;
 }
 
 .btn--primary:hover {
@@ -1045,7 +1044,7 @@ input:focus {
     font-weight: var(--font-weight-medium);
     cursor: pointer;
     transition: all var(--duration-normal) var(--ease-standard);
-    margin-bottom: var(--space-10);
+    margin: var(--space-10);
     display: inline-flex;
     align-items: center;
     justify-content: center;
