@@ -469,6 +469,183 @@ pre code {
   cursor: not-allowed;
 }
 
+/* Стили для социальных ссылок */
+.social-links {
+    margin-top: 2rem;
+    text-align: center;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--color-border);
+}
+
+.social-links p,
+.social-links h3 {
+    margin-bottom: 1rem;
+    color: var(--color-text);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    text-decoration: none;
+    color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.social-icon:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.social-icon:hover:before {
+    opacity: 1;
+}
+
+.social-icon i {
+    font-size: 1.3rem;
+    z-index: 1;
+}
+
+/* Специфичные цвета для каждой соцсети */
+.social-icon.instagram {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+}
+
+.social-icon.telegram {
+    background: linear-gradient(45deg, #0088cc, #0099dd);
+}
+
+.social-icon.whatsapp {
+    background: linear-gradient(45deg, #25d366, #128c7e);
+}
+
+.social-icon.website {
+    background: linear-gradient(45deg, var(--color-teal-600), var(--color-teal-500));
+}
+
+/* Эффекты при наведении */
+.social-icon:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.social-icon:active {
+    transform: translateY(-1px) scale(1.02);
+}
+
+/* Стили для социальных ссылок в личном кабинете (с текстом) */
+.dashboard-social .social-icon {
+    width: auto;
+    height: auto;
+    padding: 0.75rem 1.25rem;
+    border-radius: 1rem;
+    gap: 0.5rem;
+    min-width: 120px;
+}
+
+.dashboard-social .social-icon span {
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.dashboard-social .social-icons {
+    gap: 0.75rem;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 480px) {
+    .social-icons {
+        gap: 0.75rem;
+    }
+
+    .social-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .social-icon i {
+        font-size: 1.1rem;
+    }
+
+    .dashboard-social .social-icon {
+        min-width: 100px;
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
+    }
+
+    .dashboard-social .social-icons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dashboard-social .social-icon {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Анимация появления */
+.social-links {
+    animation: fadeInUp 0.6s ease-out 0.3s both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Дополнительные эффекты */
+.social-icon:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.social-icon:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* Темная тема */
+@media (prefers-color-scheme: dark), [data-color-scheme="dark"] {
+    .social-links {
+        border-top-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .social-links p,
+    .social-links h3 {
+        color: rgba(255, 255, 255, 0.9);
+    }
+}
+
 /* Form elements */
 .form-control {
   display: block;
