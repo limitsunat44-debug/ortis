@@ -511,3 +511,317 @@ window.onclick = function(event) {
         }
     });
 }
+
+// ==================== SMS РАССЫЛКА В АДМИН ПАНЕЛИ ====================
+
+// Конфигурация SMS (такая же как в пользовательском приложении)
+const SMS_CONFIG = {
+    login: 'ortosalon.tj',
+    hash: 'c908aeb36c62699337e59e6d78aeeeaa',
+    sender: 'OrtosalonTj',
+    server: 'https://api.osonsms.com/sendsms_v1.php'
+};
+
+// Статус рассылки
+let broadcastStatus = {
+    isRunning: false,
+    sent: 0,
+    failed: 0,
+    total: 0,
+    currentUser: null
+};
+
+// ==================== ФУНКЦИИ РАССЫЛКИ ====================
+
+// Открыть окно рассылки
+function openBroadcastModal() {
+    document.getElementById('broadcastMessage').value = '';
+    document.getElementById('broadcastRecipients').value = 'all';
+    document.getElementById('broadcastModal').classList.add('active');
+    
+    // Обновляем счетчики получателей
+    updateRecipientCount();
+}
+
+// Обновление счетчика получателей
+function updateRecipientCount() {
+    const recipientType = document.getElementById('broadcastRecipients').value;
+    let count = 0;
+    
+    switch (recipientType) {
+        case 'all':
+            count = allUsers.length;
+            break;
+        case 'today':
+            const today = new Date().toDateString();
+            count = allUsers.filter(user => 
+                new Date(user.createdAt).toDateString() === today
+            ).length;
+            break;
+        case 'week':
+            const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+            count = allUsers.filter(user => 
+                new Date(user.createdAt) >= weekAgo
+            ).length;
+            break;
+        case 'active':
+            const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+            count = allUsers.filter(user => {
+                const lastLogin = new Date(user.lastLogin || user.createdAt);
+                return lastLogin >= monthAgo;
+            }).length;
+            break;
+    }
+    
+    document.getElementById('recipientCount').textContent = count;
+}
+
+// Получить список получателей по типу
+function getRecipients(type) {
+    switch (type) {
+        case 'all':
+            return allUsers;
+        
+        case 'today':
+            const today = new Date().toDateString();
+            return allUsers.filter(user => 
+                new Date(user.createdAt).toDateString() === today
+            );
+        
+        case 'week':
+            const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+            return allUsers.filter(user => 
+                new Date(user.createdAt) >= weekAgo
+            );
+        
+        case 'active':
+            const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+            return allUsers.filter(user => {
+                const lastLogin = new Date(user.lastLogin || user.createdAt);
+                return lastLogin >= monthAgo;
+            });
+        
+        default:
+            return [];
+    }
+}
+
+// Создание SHA256 хеша для SMS API
+async function createSHA256Hash(text) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Отправка одного SMS
+async function sendSingleSMS(phone, message, txnId) {
+    try {
+        // Форматируем номер (убираем + и приводим к формату 992XXXXXXXXX)
+        let formattedPhone = phone.replace(/[^0-9]/g, '');
+        if (phone.startsWith('+992') && !formattedPhone.startsWith('992')) {
+            formattedPhone = '992' + formattedPhone.substring(3);
+        }
+        
+        console.log(`📤 Отправка SMS на ${phone} (${formattedPhone})`);
+        
+        // Создаем хеш
+        const hashString = `${txnId};${SMS_CONFIG.login};${SMS_CONFIG.sender};${formattedPhone};${SMS_CONFIG.hash}`;
+        const hash = await createSHA256Hash(hashString);
+        
+        // Формируем URL для API
+        const smsUrl = `${SMS_CONFIG.server}?from=${SMS_CONFIG.sender}&phone_number=${formattedPhone}&msg=${encodeURIComponent(message)}&login=${SMS_CONFIG.login}&str_hash=${hash}&txn_id=${txnId}`;
+        
+        const response = await fetch(smsUrl);
+        const result = await response.json();
+        
+        if (response.status === 201 && result.status === 'ok') {
+            console.log(`✅ SMS отправлен на ${phone}`);
+            return { success: true, phone, result };
+        } else {
+            console.error(`❌ Ошибка отправки SMS на ${phone}:`, result);
+            return { success: false, phone, error: result };
+        }
+        
+    } catch (error) {
+        console.error(`❌ Критическая ошибка отправки SMS на ${phone}:`, error);
+        return { success: false, phone, error: error.message };
+    }
+}
+
+// Основная функция рассылки
+async function startBroadcast() {
+    const message = document.getElementById('broadcastMessage').value.trim();
+    const recipientType = document.getElementById('broadcastRecipients').value;
+    
+    // Валидация
+    if (!message) {
+        alert('Введите текст сообщения');
+        return;
+    }
+    
+    if (message.length > 160) {
+        if (!confirm('Сообщение длиннее 160 символов. Это может увеличить стоимость. Продолжить?')) {
+            return;
+        }
+    }
+    
+    // Получаем список получателей
+    const recipients = getRecipients(recipientType);
+    
+    if (recipients.length === 0) {
+        alert('Нет получателей для рассылки');
+        return;
+    }
+    
+    // Подтверждение рассылки
+    if (!confirm(`Отправить сообщение ${recipients.length} получателям?\n\nТекст: "${message}"`)) {
+        return;
+    }
+    
+    // Инициализация рассылки
+    broadcastStatus = {
+        isRunning: true,
+        sent: 0,
+        failed: 0,
+        total: recipients.length,
+        currentUser: null
+    };
+    
+    // Обновляем интерфейс
+    updateBroadcastProgress();
+    document.getElementById('startBroadcastBtn').disabled = true;
+    document.getElementById('stopBroadcastBtn').disabled = false;
+    
+    console.log(`🚀 Начинаем рассылку для ${recipients.length} получателей`);
+    
+    // Рассылка с задержкой между сообщениями
+    for (let i = 0; i < recipients.length && broadcastStatus.isRunning; i++) {
+        const user = recipients[i];
+        broadcastStatus.currentUser = user.name || user.phone;
+        
+        updateBroadcastProgress();
+        
+        const txnId = `${Date.now()}_${i}`;
+        const result = await sendSingleSMS(user.phone, message, txnId);
+        
+        if (result.success) {
+            broadcastStatus.sent++;
+        } else {
+            broadcastStatus.failed++;
+        }
+        
+        updateBroadcastProgress();
+        
+        // Задержка между отправками (2 секунды)
+        if (i < recipients.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+    }
+    
+    // Завершение рассылки
+    broadcastStatus.isRunning = false;
+    broadcastStatus.currentUser = null;
+    
+    document.getElementById('startBroadcastBtn').disabled = false;
+    document.getElementById('stopBroadcastBtn').disabled = true;
+    
+    console.log(`✅ Рассылка завершена. Отправлено: ${broadcastStatus.sent}, Ошибок: ${broadcastStatus.failed}`);
+    alert(`Рассылка завершена!\n\nОтправлено: ${broadcastStatus.sent}\nОшибок: ${broadcastStatus.failed}`);
+    
+    updateBroadcastProgress();
+}
+
+// Остановка рассылки
+function stopBroadcast() {
+    if (confirm('Вы уверены, что хотите остановить рассылку?')) {
+        broadcastStatus.isRunning = false;
+        document.getElementById('startBroadcastBtn').disabled = false;
+        document.getElementById('stopBroadcastBtn').disabled = true;
+        console.log('🛑 Рассылка остановлена пользователем');
+    }
+}
+
+// Обновление прогресса рассылки
+function updateBroadcastProgress() {
+    const progressBar = document.getElementById('broadcastProgress');
+    const progressText = document.getElementById('broadcastProgressText');
+    const currentUserSpan = document.getElementById('currentUser');
+    
+    if (broadcastStatus.total > 0) {
+        const percent = Math.round(((broadcastStatus.sent + broadcastStatus.failed) / broadcastStatus.total) * 100);
+        progressBar.style.width = percent + '%';
+        
+        progressText.textContent = `${broadcastStatus.sent + broadcastStatus.failed} / ${broadcastStatus.total} (${percent}%)`;
+        
+        if (broadcastStatus.currentUser) {
+            currentUserSpan.textContent = `Отправка: ${broadcastStatus.currentUser}`;
+        } else {
+            currentUserSpan.textContent = `Отправлено: ${broadcastStatus.sent}, Ошибок: ${broadcastStatus.failed}`;
+        }
+    }
+}
+
+// Закрытие окна рассылки
+function closeBroadcastModal() {
+    if (broadcastStatus.isRunning) {
+        if (!confirm('Рассылка выполняется. Вы уверены, что хотите закрыть окно?')) {
+            return;
+        }
+        stopBroadcast();
+    }
+    document.getElementById('broadcastModal').classList.remove('active');
+}
+
+// Предустановленные шаблоны сообщений
+const messageTemplates = {
+    welcome: 'Добро пожаловать в OrtosalonTj! Ваша карта лояльности готова к использованию.',
+    promo: 'Специальное предложение только для вас! Скидка 20% на всю ортопедическую продукцию.',
+    reminder: 'Не забудьте использовать свою карту лояльности при следующей покупке!',
+    newProduct: 'Новинка в OrtosalonTj! Приходите и оценивайте новую коллекцию ортопедических товаров.'
+};
+
+// Применение шаблона сообщения
+function applyMessageTemplate(templateKey) {
+    const message = messageTemplates[templateKey];
+    if (message) {
+        document.getElementById('broadcastMessage').value = message;
+    }
+}
+
+// Счетчик символов в сообщении
+function updateCharacterCount() {
+    const message = document.getElementById('broadcastMessage').value;
+    const count = message.length;
+    const counter = document.getElementById('characterCount');
+    
+    counter.textContent = `${count}/160`;
+    
+    if (count > 160) {
+        counter.style.color = '#ff6b6b';
+    } else if (count > 140) {
+        counter.style.color = '#ffa726';
+    } else {
+        counter.style.color = '#666';
+    }
+}
+
+// ==================== ИНИЦИАЛИЗАЦИЯ ====================
+
+// Добавляем обработчики событий при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    // Обработчик изменения типа получателей
+    const recipientsSelect = document.getElementById('broadcastRecipients');
+    if (recipientsSelect) {
+        recipientsSelect.addEventListener('change', updateRecipientCount);
+    }
+    
+    // Обработчик счетчика символов
+    const messageTextarea = document.getElementById('broadcastMessage');
+    if (messageTextarea) {
+        messageTextarea.addEventListener('input', updateCharacterCount);
+    }
+    
+    console.log('📱 SMS рассылка инициализирована');
+});
