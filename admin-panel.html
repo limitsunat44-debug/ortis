@@ -29,6 +29,80 @@
                     <span class="admin-info">Администратор: <span id="currentAdmin"></span></span>
                     <button onclick="adminLogout()" class="btn-logout">Выйти</button>
                 </div>
+
+                <!-- ДОБАВЬТЕ ЭТО В admin-panel.html ПОСЛЕ СЕКЦИИ УПРАВЛЕНИЯ ПОЛЬЗОВАТЕЛЯМИ -->
+
+<!-- Кнопка для открытия рассылки -->
+<div class="broadcast-section">
+    <h2>📱 SMS Рассылка</h2>
+    <button onclick="openBroadcastModal()" class="btn-broadcast">Отправить рассылку</button>
+</div>
+
+<!-- Модальное окно рассылки -->
+<div class="modal" id="broadcastModal">
+    <div class="modal-content broadcast-modal">
+        <div class="modal-header">
+            <h3>📱 SMS Рассылка клиентам</h3>
+            <span class="close-btn" onclick="closeBroadcastModal()">&times;</span>
+        </div>
+        
+        <div class="modal-body">
+            <!-- Получатели -->
+            <div class="form-group">
+                <label>Получатели:</label>
+                <select id="broadcastRecipients" onchange="updateRecipientCount()">
+                    <option value="all">Все клиенты</option>
+                    <option value="today">Новые клиенты (сегодня)</option>
+                    <option value="week">Новые клиенты (за неделю)</option>
+                    <option value="active">Активные клиенты (за месяц)</option>
+                </select>
+                <span class="recipient-count">Получателей: <strong id="recipientCount">0</strong></span>
+            </div>
+            
+            <!-- Шаблоны сообщений -->
+            <div class="form-group">
+                <label>Быстрые шаблоны:</label>
+                <div class="template-buttons">
+                    <button onclick="applyMessageTemplate('welcome')" class="btn-template">Приветствие</button>
+                    <button onclick="applyMessageTemplate('promo')" class="btn-template">Акция</button>
+                    <button onclick="applyMessageTemplate('reminder')" class="btn-template">Напоминание</button>
+                    <button onclick="applyMessageTemplate('newProduct')" class="btn-template">Новинка</button>
+                </div>
+            </div>
+            
+            <!-- Текст сообщения -->
+            <div class="form-group">
+                <label>Текст сообщения:</label>
+                <textarea id="broadcastMessage" 
+                         placeholder="Введите текст SMS сообщения..." 
+                         rows="4" 
+                         oninput="updateCharacterCount()"></textarea>
+                <div class="character-count">
+                    <span id="characterCount">0/160</span>
+                    <small>Рекомендуется до 160 символов для одного SMS</small>
+                </div>
+            </div>
+            
+            <!-- Прогресс рассылки -->
+            <div class="broadcast-progress" id="broadcastProgressContainer" style="display: none;">
+                <label>Прогресс рассылки:</label>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="broadcastProgress"></div>
+                </div>
+                <div class="progress-info">
+                    <span id="broadcastProgressText">0 / 0</span>
+                    <span id="currentUser"></span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button onclick="startBroadcast()" id="startBroadcastBtn" class="btn-send">📤 Отправить рассылку</button>
+            <button onclick="stopBroadcast()" id="stopBroadcastBtn" class="btn-stop" disabled>🛑 Остановить</button>
+            <button onclick="closeBroadcastModal()" class="btn-cancel">Отмена</button>
+        </div>
+    </div>
+</div>
             </header>
 
             <div class="dashboard-content">
