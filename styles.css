@@ -1,0 +1,489 @@
+/* Современный дизайн для карты лояльности - стиль как на фото */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #333;
+}
+
+.container {
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+/* Форма авторизации */
+.auth-form {
+    background: white;
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.auth-form h1 {
+    text-align: center;
+    color: #667eea;
+    margin-bottom: 24px;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.form-step {
+    display: none;
+}
+
+.form-step.active {
+    display: block;
+}
+
+.form-step h2 {
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.phone-input-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.country-select {
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 15px;
+    background: white;
+    color: #333;
+    min-width: 120px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.country-select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+input[type="tel"],
+input[type="text"] {
+    flex: 1;
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 15px;
+    background: white;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.btn-primary,
+.btn-secondary {
+    width: 100%;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 12px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: #f5f5f5;
+    color: #667eea;
+}
+
+.btn-secondary:hover {
+    background: #e8e8e8;
+}
+
+.error-message {
+    color: #ef4444;
+    font-size: 14px;
+    margin-top: 12px;
+    text-align: center;
+    min-height: 20px;
+}
+
+/* Личный кабинет - стиль как на фото */
+.user-dashboard {
+    background: white;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.dashboard-header h1 {
+    color: #333;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.btn-logout {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    background: #ef4444;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+}
+
+/* Карточка баллов - как на фото */
+.points-card {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(30, 64, 175, 0.4);
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.points-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+}
+
+.points-value {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.points-label {
+    font-size: 16px;
+    opacity: 0.9;
+    margin-bottom: 16px;
+}
+
+.points-history {
+    font-size: 14px;
+    opacity: 0.8;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.points-history:hover {
+    opacity: 1;
+}
+
+/* Карточка лояльности с штрихкодом - как на фото */
+.loyalty-card {
+    background: white;
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.loyalty-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.loyalty-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.loyalty-card-subtitle {
+    font-size: 14px;
+    color: #999;
+    margin-bottom: 20px;
+}
+
+.barcode-container {
+    text-align: center;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 16px;
+    margin-bottom: 12px;
+}
+
+#barcodeDisplay {
+    margin: 0 auto;
+    display: block;
+    background: white;
+    padding: 16px;
+    border-radius: 12px;
+    max-width: 100%;
+    height: auto;
+}
+
+.barcode-number {
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-top: 12px;
+    letter-spacing: 2px;
+}
+
+.barcode-info {
+    color: #666;
+    font-size: 13px;
+    margin-top: 8px;
+    line-height: 1.5;
+}
+
+/* Секция профиля */
+.profile-section {
+    background: white;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+}
+
+.profile-section h2 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.info-item label {
+    font-weight: 600;
+    color: #666;
+    font-size: 14px;
+}
+
+.info-item input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 15px;
+    background: white;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.info-item input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.info-item input[readonly] {
+    background: #f5f5f5;
+    color: #999;
+    cursor: not-allowed;
+}
+
+/* Меню навигации как на фото */
+.dashboard-menu {
+    background: white;
+    border-radius: 20px;
+    padding: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    margin-top: 20px;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 8px;
+}
+
+.menu-item:hover {
+    background: #f9f9f9;
+}
+
+.menu-item-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.menu-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.menu-icon.profile {
+    background: #e0e7ff;
+}
+
+.menu-icon.notifications {
+    background: #fef3c7;
+}
+
+.menu-icon.orders {
+    background: #dbeafe;
+}
+
+.menu-label {
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+}
+
+.menu-badge {
+    background: #f97316;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.menu-count {
+    color: #999;
+    font-size: 14px;
+}
+
+.menu-arrow {
+    color: #ccc;
+    font-size: 18px;
+}
+
+/* Адаптивность */
+@media (max-width: 480px) {
+    body {
+        padding: 12px;
+    }
+
+    .container {
+        padding: 0;
+    }
+
+    .auth-form,
+    .user-dashboard {
+        padding: 24px 20px;
+    }
+
+    .auth-form h1 {
+        font-size: 24px;
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+
+    .btn-logout {
+        width: 100%;
+    }
+
+    .points-value {
+        font-size: 40px;
+    }
+
+    .phone-input-container {
+        flex-direction: column;
+    }
+
+    .country-select {
+        width: 100%;
+    }
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.user-dashboard,
+.auth-form {
+    animation: fadeIn 0.5s ease;
+}
+
+/* Скрытие элементов */
+.hidden {
+    display: none !important;
+}

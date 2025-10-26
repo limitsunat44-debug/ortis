@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Карта лояльности OrtosalonTj</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Форма авторизации -->
+        <div id="authForm" class="auth-form">
+            <h1>🏪 OrtosalonTj</h1>
+
+            <!-- Шаг 1: Ввод телефона -->
+            <div id="phoneStep" class="form-step active">
+                <h2>Вход в личный кабинет</h2>
+                <p style="text-align: center; color: #666; margin-bottom: 20px; font-size: 14px;">
+                    Введите номер телефона для входа или регистрации
+                </p>
+
+                <div class="phone-input-container">
+                    <select id="countryCode" class="country-select">
+                        <option value="+992">🇹🇯 +992</option>
+                        <option value="+7">🇷🇺 +7</option>
+                        <option value="+998">🇺🇿 +998</option>
+                    </select>
+                    <input type="tel" id="phoneNumber" placeholder="Номер телефона" maxlength="9">
+                </div>
+
+                <div id="phoneError" class="error-message"></div>
+
+                <button onclick="sendVerificationCode()" class="btn-primary">
+                    Получить код
+                </button>
+            </div>
+
+            <!-- Шаг 2: Ввод кода -->
+            <div id="codeStep" class="form-step">
+                <h2>Подтверждение</h2>
+                <p id="sentToNumber" style="text-align: center; color: #666; margin-bottom: 20px; font-size: 14px;"></p>
+
+                <input type="text" id="verificationCode" placeholder="Код из SMS" maxlength="6">
+
+                <div id="codeError" class="error-message"></div>
+
+                <button onclick="verifyCode()" class="btn-primary">
+                    Подтвердить
+                </button>
+
+                <button onclick="showStep('phoneStep')" class="btn-secondary">
+                    Изменить номер
+                </button>
+            </div>
+        </div>
+
+        <!-- Личный кабинет пользователя -->
+        <div id="userDashboard" class="user-dashboard hidden">
+            <div class="dashboard-header">
+                <h1>Личный кабинет</h1>
+                <button onclick="logout()" class="btn-logout">Выйти</button>
+            </div>
+
+            <!-- Карточка баллов -->
+            <div class="points-card">
+                <div class="points-value" id="pointsValue">-10%</div>
+                <div class="points-label">Ваша скидка</div>
+                <div class="points-history">
+                    История покупок →
+                </div>
+            </div>
+
+            <!-- Карточка лояльности с штрихкодом -->
+            <div class="loyalty-card">
+                <div class="loyalty-card-header">
+                    <div class="loyalty-card-title">Ваша карта лояльности</div>
+                </div>
+                <div class="loyalty-card-subtitle">
+                    Покажите ее консультанты для получения скидки
+                </div>
+
+                <div class="barcode-container">
+                    <svg id="barcodeDisplay"></svg>
+                    <div id="barcodeNumber" class="barcode-number"></div>
+                </div>
+            </div>
+
+            <!-- Профиль пользователя -->
+            <div class="profile-section">
+                <h2>👤 Профиль</h2>
+                <div class="profile-info">
+                    <div class="info-item">
+                        <label>Телефон:</label>
+                        <input type="tel" id="userPhone" readonly>
+                    </div>
+                    <div class="info-item">
+                        <label>Имя:</label>
+                        <input type="text" id="userName" placeholder="Введите ваше имя">
+                    </div>
+                    <button onclick="saveProfile()" class="btn-primary">
+                        Сохранить профиль
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подключаем библиотеки -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app-modern-fixed.js"></script>
+</body>
+</html>
