@@ -427,7 +427,7 @@ input:focus {
 /* Адаптивность */
 @media (max-width: 480px) {
     body {
-        padding: 32px;
+        padding: 12px;
     }
 
     .container {
