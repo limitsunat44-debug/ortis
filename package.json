@@ -1,0 +1,14 @@
+{
+  "name": "ortis-loyalty",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "ORTO.CARDS / Ортосалон — личный кабинет карты лояльности (Supabase + Vercel). 1С только продаёт, баллы считает backend.",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.106.2",
+    "ws": "^8.21.0"
+  }
+}

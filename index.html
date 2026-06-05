@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ортосалон - Личный кабинет</title>
+    <title>Ортосалон — Личный кабинет</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -14,7 +14,6 @@
             <div id="phoneStep" class="auth-step active">
                 <div class="auth-header">
                     <h1>Ортосалон</h1>
-                    <div class="menu-btn">⋮</div>
                 </div>
 
                 <div class="auth-content">
@@ -32,27 +31,25 @@
                                 <option value="+7">🇷🇺 +7</option>
                                 <option value="+998">🇺🇿 +998</option>
                             </select>
-                            <input 
-                                type="tel" 
-                                id="phoneNumber" 
+                            <input
+                                type="tel"
+                                id="phoneNumber"
                                 placeholder="(XX) XXX-XX-XX"
                                 inputmode="numeric"
                             >
                         </div>
                     </div>
 
-                    <button class="btn-primary" onclick="sendVerificationCode()">
+                    <button class="btn-primary" id="sendCodeBtn" onclick="sendVerificationCode()">
                         Получить код
                     </button>
-
-                   
                 </div>
             </div>
 
             <!-- ШАГ 2: ПРОВЕРКА КОДА -->
             <div id="codeStep" class="auth-step">
                 <div class="auth-header">
-                    <div class="back-btn" onclick="logout()">←</div>
+                    <div class="back-btn" onclick="backToPhone()">←</div>
                     <h1>Подтверждение</h1>
                     <div style="width: 40px;"></div>
                 </div>
@@ -63,12 +60,13 @@
                     <p class="auth-subtitle" id="sentToNumber">Код отправлен на номер</p>
 
                     <div id="codeError" class="error-message"></div>
+                    <div id="codeHint" class="hint-message"></div>
 
                     <div class="input-group">
                         <label>Код из SMS (6 цифр)</label>
-                        <input 
-                            type="text" 
-                            id="verificationCode" 
+                        <input
+                            type="text"
+                            id="verificationCode"
                             class="code-input"
                             placeholder="000000"
                             maxlength="6"
@@ -76,12 +74,12 @@
                         >
                     </div>
 
-                    <button class="btn-primary" onclick="verifyCode()">
+                    <button class="btn-primary" id="verifyBtn" onclick="verifyCode()">
                         Подтвердить
                     </button>
 
                     <p class="auth-subtitle" style="margin-top: 24px;">
-                        Не получили код? Проверьте спам
+                        Не получили код? Проверьте спам или запросите повторно
                     </p>
                 </div>
             </div>
@@ -91,10 +89,9 @@
         <div id="dashboard" class="dashboard hidden">
             <div class="dashboard-header">
                 <div class="header-left">
-                    <div class="back-btn" onclick="logout()">←</div>
                     <h1>Личный кабинет</h1>
                 </div>
-                <div class="menu-btn">⋮</div>
+                <button class="icon-logout" onclick="logout()" title="Выйти">⏻</button>
             </div>
 
             <!-- ВИРТУАЛЬНАЯ КАРТА -->
@@ -103,22 +100,21 @@
                     <div class="card-pattern"></div>
                     <div class="card-content">
                         <div class="card-header">
-                            <div class="card-logo">💳</div>
+                            <div class="card-logo">Ортосалон</div>
                             <div class="card-chip">🔷</div>
                         </div>
 
                         <div class="card-info">
                             <div class="card-number" id="userEAN">0000 0000 0000 0000</div>
 
-                            <div class="card-holder">
-                                <div class="card-holder-label">Владелец карты</div>
-                                <div class="card-holder-name" id="userCardName">НОВЫЙ ПОЛЬЗОВАТЕЛЬ</div>
-                            </div>
-
-                            <div class="card-date">
-                                <div>
-                                    <div class="card-date-label">Действительна до</div>
-                                    <div>12/26</div>
+                            <div class="card-bottom-row">
+                                <div class="card-holder">
+                                    <div class="card-holder-label">Владелец карты</div>
+                                    <div class="card-holder-name" id="userCardName">НОВЫЙ КЛИЕНТ</div>
+                                </div>
+                                <div class="card-points">
+                                    <div class="card-points-label">Бонусы</div>
+                                    <div class="card-points-value" id="cardPoints">0</div>
                                 </div>
                             </div>
                         </div>
@@ -126,22 +122,24 @@
                 </div>
             </div>
 
-            <!-- БАЛАНС И СКИДКА -->
-            <div class="balance-section">
-                <div class="balance-card">
-                    <div class="balance-icon">⭐</div>
-                    <div class="balance-info">
-                        <div class="balance-label">Ваша скидка</div>
-                        <div class="balance-amount">-10%</div>
-                    </div>
-                    <button class="balance-btn">→</button>
+            <!-- СВОДКА: БОНУСЫ И СКИДКА -->
+            <div class="stats-grid">
+                <div class="stat-card stat-points">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-value" id="statPoints">0</div>
+                    <div class="stat-label">Бонусов на счёте</div>
+                </div>
+                <div class="stat-card stat-discount">
+                    <div class="stat-icon">🏷️</div>
+                    <div class="stat-value" id="statDiscount">0%</div>
+                    <div class="stat-label">Ваша скидка</div>
                 </div>
             </div>
 
             <!-- ШТРИХКОД -->
             <div class="barcode-section">
                 <h3 class="section-title">Штрихкод карты</h3>
-                <p class="section-subtitle">Покажите консультанту для получения скидки</p>
+                <p class="section-subtitle">Покажите консультанту для начисления бонусов и скидки</p>
 
                 <div class="barcode-wrapper">
                     <div class="barcode-container">
@@ -151,6 +149,13 @@
                 </div>
             </div>
 
+            <!-- ИСТОРИЯ ПОКУПОК -->
+            <div class="history-section">
+                <h3 class="section-title">🧾 История покупок</h3>
+                <div id="historyEmpty" class="history-empty">Пока нет покупок. Совершите покупку от 150 сомони — и получите +20 бонусов.</div>
+                <div id="historyList" class="history-list"></div>
+            </div>
+
             <!-- ПРОФИЛЬ -->
             <div class="profile-section">
                 <h3 class="section-title">👤 Мой профиль</h3>
@@ -158,34 +163,18 @@
                 <div class="profile-info">
                     <div class="info-row">
                         <label>Телефон</label>
-                        <input 
-                            type="tel" 
-                            id="userPhone"
-                            readonly
-                        >
+                        <input type="tel" id="userPhone" readonly>
                     </div>
 
                     <div class="info-row">
                         <label>Имя</label>
-                        <input 
-                            type="text" 
-                            id="userName"
-                            placeholder="Введите ваше имя"
-                        >
+                        <input type="text" id="userName" placeholder="Введите ваше имя">
                     </div>
 
-                    <div class="info-row">
-                        <label>E-mail</label>
-                        <input 
-                            type="email" 
-                            id="userEmail"
-                            placeholder="your@email.com"
-                        >
-                    </div>
-
-                    <button class="btn-primary" onclick="saveProfile()">
+                    <button class="btn-primary" id="saveProfileBtn" onclick="saveProfile()">
                         Сохранить профиль
                     </button>
+                    <div id="profileHint" class="hint-message"></div>
                 </div>
             </div>
 
@@ -196,365 +185,268 @@
         </div>
     </div>
 
-    <!-- SUPABASE БИБЛИОТЕКА -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.48.1"></script>
-
     <!-- JsBarcode для генерации штрихкода -->
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
     <!-- ОСНОВНОЙ СКРИПТ -->
     <script>
-// Конфигурация SMS API для OrtoPlus
-const SMS_CONFIG = {
-            login: 'ortosalon.tj',
-            hash: 'c908aeb36c62699337e59e6d78aeeeaa',
-            sender: 'OrtosalonTj',
-            server: 'https://api.osonsms.com/sendsms_v1.php'
-        };
+// ============================================
+// Фронтенд НЕ содержит секретов: ни ключей Supabase, ни SMS-hash.
+// Вся логика входа, отправки SMS и проверки кода — на сервере /api/.
+// ============================================
 
-// КОНФИГУРАЦИЯ Supabase
-const SUPABASE_CONFIG = {
-            url: 'https://mvjiqysmcclvceswfqwv.supabase.co',
-            anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12amlxeXNtY2NsdmNlc3dmcXd2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MDUyOTYsImV4cCI6MjA3Njk4MTI5Nn0.FoRyIZ9E4M2ZwEE8Kh4hDdkBDLuhyqRut7VEKG4uQkk',
-            tableName: 'loyalty_users'
-        };
+const API = {
+  requestCode: '/api/auth/request-code',
+  verifyCode:  '/api/auth/verify-code',
+  me:          '/api/me',
+};
+const TOKEN_KEY = 'orto_session_token';
 
-// Глобальные переменные
-let supabase = null;
 let currentUser = null;
-let verificationTxnId = null;
-let currentPhone = null;
+let currentPhone = null;   // в формате +992XXXXXXXXX
 
-// ============================================
-// ФУНКЦИИ ОБРАБОТЧИКИ
-// ============================================
-
-// Создание SHA256 хеша
-async function createSHA256Hash(text) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(text);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+// --- helpers ---
+function showError(el, message) {
+  if (!el) return;
+  el.textContent = message || '';
+  el.style.display = message ? 'block' : 'none';
 }
-
-// Синхронизация с Supabase
-async function syncWithSupabase(userData) {
-  if (!supabase) {
-    console.warn('⚠️ Supabase не инициализирован');
-    return;
-  }
-
-  try {
-    console.log('☁️ Синхронизация с Supabase...');
-    const { data: existingUser } = await supabase
-      .from(SUPABASE_CONFIG.tableName)
-      .select('*')
-      .eq('phone', userData.phone)
-      .single();
-
-    if (existingUser) {
-      await supabase
-        .from(SUPABASE_CONFIG.tableName)
-        .update({
-          name: userData.name,
-          last_login: userData.lastLogin,
-          updated_at: new Date().toISOString()
-        })
-        .eq('phone', userData.phone);
-      console.log('🔄 Пользователь обновлён');
-    } else {
-      await supabase
-        .from(SUPABASE_CONFIG.tableName)
-        .insert([{
-          phone: userData.phone,
-          name: userData.name || '',
-          ean_code: userData.eanCode,
-          created_at: userData.createdAt,
-          last_login: userData.lastLogin
-        }]);
-      console.log('➕ Пользователь добавлен');
-    }
-
-    console.log('✅ Синхронизация завершена');
-  } catch (error) {
-    console.error('❌ Ошибка синхронизации:', error);
-  }
+function showHint(el, message) {
+  if (!el) return;
+  el.textContent = message || '';
+  el.style.display = message ? 'block' : 'none';
 }
+function getToken() { return localStorage.getItem(TOKEN_KEY); }
+function setToken(t) { localStorage.setItem(TOKEN_KEY, t); }
+function clearToken() { localStorage.removeItem(TOKEN_KEY); }
 
-// Получение пользователей из Supabase
-async function getSupabaseUsers() {
-  if (!supabase) return [];
-  try {
-    const { data, error } = await supabase
-      .from(SUPABASE_CONFIG.tableName)
-      .select('*');
-    if (error) throw error;
-    return data.map(user => ({
-      id: user.id,
-      phone: user.phone,
-      name: user.name || '',
-      eanCode: user.ean_code,
-      createdAt: user.created_at,
-      lastLogin: user.last_login
-    }));
-  } catch (error) {
-    console.error('❌ Ошибка получения данных:', error);
-    return [];
-  }
-}
-
-// Создание пользователя
-function createNewUser(phone) {
-  const userId = Date.now();
-  const eanCode = generateEAN13();
-  return {
-    id: userId,
-    phone: phone || '',
-    name: '',
-    eanCode: eanCode,
-    createdAt: new Date().toISOString(),
-    lastLogin: new Date().toISOString()
-  };
-}
-
-// Генерация EAN-13
-function generateEAN13() {
-  let code = '';
-  for (let i = 0; i < 12; i++) {
-    code += Math.floor(Math.random() * 10);
-  }
-  let sum = 0;
-  for (let i = 0; i < 12; i++) {
-    sum += (i % 2 === 0 ? 1 : 3) * parseInt(code[i]);
-  }
-  const checkDigit = (10 - (sum % 10)) % 10;
-  return code + checkDigit;
-}
-
-// Показ/скрытие ошибок
-function showError(element, message) {
-  if (element) {
-    element.textContent = message;
-    element.style.display = message ? 'block' : 'none';
-  }
-}
-
-// Показ шагов
 function showStep(stepId) {
-  document.querySelectorAll('.auth-step').forEach(step => {
-    step.classList.remove('active');
-  });
+  document.querySelectorAll('.auth-step').forEach(s => s.classList.remove('active'));
   const step = document.getElementById(stepId);
-  if (step) {
-    step.classList.add('active');
-  }
+  if (step) step.classList.add('active');
 }
 
-// Показ дашборда
-function showDashboard() {
-  document.querySelector('.auth-section').classList.add('hidden');
-  document.getElementById('dashboard').classList.remove('hidden');
-  
-  if (currentUser) {
-    document.getElementById('userPhone').value = currentUser.phone || '';
-    document.getElementById('userName').value = currentUser.name || '';
-    document.getElementById('userCardName').textContent = (currentUser.name || 'НОВЫЙ ПОЛЬЗОВАТЕЛЬ').toUpperCase();
-    document.getElementById('userEAN').textContent = formatEAN(currentUser.eanCode || '0000000000000');
-    document.getElementById('barcodeNumber').textContent = currentUser.eanCode || '0000000000000';
-    
-    // Генерируем штрихкод
-    try {
-      JsBarcode('#barcodeDisplay', currentUser.eanCode || '0000000000000', {
-        format: 'EAN13',
-        width: 2,
-        height: 80,
-        displayValue: false
-      });
-    } catch (error) {
-      console.error('Ошибка генерации штрихкода:', error);
-    }
-  }
-}
-
-// Форматирование EAN для отображения
 function formatEAN(ean) {
-  if (!ean || ean.length < 13) return ean;
+  if (!ean || ean.length < 13) return ean || '';
   return ean.slice(0, 4) + ' ' + ean.slice(4, 8) + ' ' + ean.slice(8, 12) + ' ' + ean.slice(12);
 }
 
-// Скрытие дашборда
-function hideDashboard() {
-  document.querySelector('.auth-section').classList.remove('hidden');
-  document.getElementById('dashboard').classList.add('hidden');
+function fmtMoney(n) {
+  const v = Number(n) || 0;
+  return v.toLocaleString('ru-RU', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + ' с.';
+}
+function fmtDate(iso) {
+  if (!iso) return '';
+  try {
+    return new Date(iso).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  } catch { return ''; }
 }
 
-// Отправка кода подтверждения
+// --- ШАГ 1: запрос кода ---
 async function sendVerificationCode() {
   const countryCode = document.getElementById('countryCode').value;
   const phoneNumber = document.getElementById('phoneNumber').value.trim();
   const errorDiv = document.getElementById('phoneError');
+  const btn = document.getElementById('sendCodeBtn');
 
+  showError(errorDiv, '');
   if (!phoneNumber) {
     showError(errorDiv, 'Введите номер телефона');
     return;
   }
 
-  let formattedPhone = phoneNumber.replace(/[^0-9]/g, '');
-  if (countryCode === '+992' && !formattedPhone.startsWith('992')) {
-    formattedPhone = '992' + formattedPhone;
-  }
+  // Собираем полный номер. Локальный 9-значный для +992 → 992XXXXXXXXX.
+  let digits = phoneNumber.replace(/\D/g, '');
+  currentPhone = countryCode + digits;
 
-  currentPhone = countryCode + phoneNumber;
-  verificationTxnId = Date.now().toString();
-  const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-  const message = `Ваш код подтверждения для OrtoPlus: ${verificationCode}`;
-
-  console.log('📱 Сгенерированный код:', verificationCode);
-  console.log('📞 Телефон:', currentPhone);
-
+  btn.disabled = true;
+  btn.textContent = 'Отправка...';
   try {
-    showError(errorDiv, '');
-    const sendButton = document.querySelector('#phoneStep .btn-primary');
-    if (sendButton) {
-      sendButton.disabled = true;
-      sendButton.textContent = 'Отправка...';
+    const resp = await fetch(API.requestCode, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: currentPhone }),
+    });
+    const data = await resp.json();
+    if (!resp.ok || !data.ok) {
+      showError(errorDiv, data.error || 'Не удалось отправить код. Попробуйте позже.');
+      return;
     }
-
-    const hashString = `${verificationTxnId};${SMS_CONFIG.login};${SMS_CONFIG.sender};${formattedPhone};${SMS_CONFIG.hash}`;
-    const hash = await createSHA256Hash(hashString);
-
-    localStorage.setItem('verification_code', verificationCode);
-    localStorage.setItem('verification_phone', currentPhone);
-
     document.getElementById('sentToNumber').textContent = `Код отправлен на номер ${currentPhone}`;
+    const hint = document.getElementById('codeHint');
+    // dev_code приходит только в тестовом режиме (SMS_PROVIDER=dev).
+    if (data.dev_code) showHint(hint, `Тестовый режим. Код: ${data.dev_code}`);
+    else showHint(hint, '');
+    showError(document.getElementById('codeError'), '');
+    document.getElementById('verificationCode').value = '';
     showStep('codeStep');
-
-    try {
-      const smsUrl = `${SMS_CONFIG.server}?from=${SMS_CONFIG.sender}&phone_number=${formattedPhone}&msg=${encodeURIComponent(message)}&login=${SMS_CONFIG.login}&str_hash=${hash}&txn_id=${verificationTxnId}`;
-
-      const response = await fetch(smsUrl);
-      const result = await response.json();
-      console.log('📥 Ответ SMS API:', result);
-
-      if (response.status !== 201 || result.status !== 'ok') {
-        console.warn('⚠️ SMS API ошибка:', result);
-        showError(document.getElementById('codeError'),
-          `SMS не отправлен. Используйте тестовый код: ${verificationCode}`);
-      } else {
-        console.log('✅ SMS успешно отправлен');
-      }
-    } catch (smsError) {
-      console.error('❌ Ошибка отправки SMS:', smsError);
-      showError(document.getElementById('codeError'),
-        `Возможны задержки. Тестовый код: ${verificationCode}`);
-    }
-  } catch (error) {
-    console.error('❌ Общая ошибка:', error);
-    document.getElementById('sentToNumber').textContent = `Код отправлен на номер ${currentPhone}`;
-    showStep('codeStep');
+  } catch (e) {
+    showError(errorDiv, 'Ошибка сети. Проверьте подключение.');
   } finally {
-    const sendButton = document.querySelector('#phoneStep .btn-primary');
-    if (sendButton) {
-      sendButton.disabled = false;
-      sendButton.textContent = 'Получить код';
-    }
+    btn.disabled = false;
+    btn.textContent = 'Получить код';
   }
 }
 
-// Проверка кода подтверждения
-async function verifyCode() {
-  const enteredCode = document.getElementById('verificationCode').value.trim();
-  const savedCode = localStorage.getItem('verification_code');
-  const errorDiv = document.getElementById('codeError');
-
-  if (!enteredCode) {
-    showError(errorDiv, 'Введите код подтверждения');
-    return;
-  }
-
-  if (enteredCode === savedCode || enteredCode === '123456') {
-    console.log('✅ Код верный!');
-    let existingUsers = await getSupabaseUsers();
-    localStorage.setItem('ortoplus_users', JSON.stringify(existingUsers));
-
-    let user = existingUsers.find(u => u && u.phone === currentPhone);
-
-    if (!user) {
-      console.log('🆕 Создаём пользователя');
-      user = createNewUser(currentPhone);
-      await syncWithSupabase(user);
-      existingUsers.push(user);
-      localStorage.setItem('ortoplus_users', JSON.stringify(existingUsers));
-    } else {
-      console.log('👤 Пользователь найден');
-      user.lastLogin = new Date().toISOString();
-      await syncWithSupabase(user);
-    }
-
-    currentUser = user;
-    localStorage.setItem('ortoplus_user', JSON.stringify(user));
-    localStorage.removeItem('verification_code');
-    localStorage.removeItem('verification_phone');
-    showDashboard();
-  } else {
-    showError(errorDiv, 'Неверный код подтверждения');
-  }
-}
-
-// Сохранение профиля
-async function saveProfile() {
-  if (currentUser) {
-    const name = document.getElementById('userName').value.trim();
-    currentUser.name = name;
-    localStorage.setItem('ortoplus_user', JSON.stringify(currentUser));
-    await syncWithSupabase(currentUser);
-    document.getElementById('userCardName').textContent = (name || 'НОВЫЙ ПОЛЬЗОВАТЕЛЬ').toUpperCase();
-    console.log('✅ Профиль сохранён');
-  }
-}
-
-// Выход
-function logout() {
-  currentUser = null;
-  localStorage.removeItem('ortoplus_user');
-  localStorage.removeItem('verification_code');
-  localStorage.removeItem('verification_phone');
-  document.getElementById('phoneNumber').value = '';
-  document.getElementById('verificationCode').value = '';
-  document.getElementById('userName').value = '';
-  document.getElementById('userEmail').value = '';
-  hideDashboard();
+function backToPhone() {
   showStep('phoneStep');
 }
 
-// ============================================
-// ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
-// ============================================
+// --- ШАГ 2: проверка кода ---
+async function verifyCode() {
+  const enteredCode = document.getElementById('verificationCode').value.trim();
+  const errorDiv = document.getElementById('codeError');
+  const btn = document.getElementById('verifyBtn');
 
-document.addEventListener('DOMContentLoaded', function() {
-  if (typeof window.supabase !== 'undefined') {
-    supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
-    console.log('✅ Supabase инициализирован');
-  } else {
-    console.error('❌ Supabase библиотека не загружена');
+  showError(errorDiv, '');
+  if (!enteredCode || enteredCode.length !== 6) {
+    showError(errorDiv, 'Введите 6-значный код');
+    return;
   }
 
-  // Загрузка сохранённого пользователя
-  const savedUser = localStorage.getItem('ortoplus_user');
-  if (savedUser) {
-    try {
-      currentUser = JSON.parse(savedUser);
-      showDashboard();
-    } catch (error) {
-      console.error('Ошибка загрузки пользователя:', error);
-      localStorage.removeItem('ortoplus_user');
-      hideDashboard();
-      showStep('phoneStep');
+  btn.disabled = true;
+  btn.textContent = 'Проверка...';
+  try {
+    const resp = await fetch(API.verifyCode, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: currentPhone, code: enteredCode }),
+    });
+    const data = await resp.json();
+    if (!resp.ok || !data.ok) {
+      showError(errorDiv, data.error || 'Неверный код');
+      return;
     }
+    setToken(data.token);
+    currentUser = data.user;
+    await loadDashboard();
+  } catch (e) {
+    showError(errorDiv, 'Ошибка сети. Попробуйте ещё раз.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Подтвердить';
+  }
+}
+
+// --- Загрузка кабинета (через /api/me с токеном) ---
+async function loadDashboard() {
+  const token = getToken();
+  if (!token) { showLogin(); return; }
+
+  try {
+    const resp = await fetch(API.me, { headers: { Authorization: 'Bearer ' + token } });
+    if (resp.status === 401) { clearToken(); showLogin(); return; }
+    const data = await resp.json();
+    if (!resp.ok || !data.ok) { clearToken(); showLogin(); return; }
+    currentUser = data.user;
+    renderDashboard(data.user, data.purchases || []);
+  } catch (e) {
+    showLogin();
+  }
+}
+
+function renderDashboard(user, purchases) {
+  document.querySelector('.auth-section').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+
+  const ean = user.ean_code || '0000000000000';
+  document.getElementById('userPhone').value = user.phone || '';
+  document.getElementById('userName').value = user.name || '';
+  document.getElementById('userCardName').textContent = (user.name || 'НОВЫЙ КЛИЕНТ').toUpperCase();
+  document.getElementById('userEAN').textContent = formatEAN(ean);
+  document.getElementById('barcodeNumber').textContent = ean;
+  document.getElementById('cardPoints').textContent = user.points_balance ?? 0;
+  document.getElementById('statPoints').textContent = user.points_balance ?? 0;
+  document.getElementById('statDiscount').textContent = (Number(user.discount_pct) || 0) + '%';
+
+  try {
+    JsBarcode('#barcodeDisplay', ean, { format: 'EAN13', width: 2, height: 80, displayValue: false });
+  } catch (e) { console.error('Штрихкод:', e); }
+
+  // История покупок
+  const list = document.getElementById('historyList');
+  const empty = document.getElementById('historyEmpty');
+  list.innerHTML = '';
+  if (!purchases.length) {
+    empty.style.display = 'block';
   } else {
-    hideDashboard();
-    showStep('phoneStep');
+    empty.style.display = 'none';
+    purchases.forEach(p => {
+      const row = document.createElement('div');
+      row.className = 'history-item';
+      const bonus = p.bonus_awarded ? `<span class="history-bonus">+${p.bonus_awarded}⭐</span>` : '';
+      row.innerHTML = `
+        <div class="history-main">
+          <div class="history-name">${p.item_name ? escapeHtml(p.item_name) : 'Покупка'}</div>
+          <div class="history-date">${fmtDate(p.purchased_at)}${p.receipt_no ? ' · чек ' + escapeHtml(String(p.receipt_no)) : ''}</div>
+        </div>
+        <div class="history-right">
+          <div class="history-amount">${fmtMoney(p.amount)}</div>
+          ${bonus}
+        </div>`;
+      list.appendChild(row);
+    });
+  }
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// --- Сохранение профиля (PUT /api/me) ---
+async function saveProfile() {
+  const token = getToken();
+  if (!token) { showLogin(); return; }
+  const name = document.getElementById('userName').value.trim();
+  const btn = document.getElementById('saveProfileBtn');
+  const hint = document.getElementById('profileHint');
+  showHint(hint, '');
+  btn.disabled = true;
+  btn.textContent = 'Сохранение...';
+  try {
+    const resp = await fetch(API.me, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ name }),
+    });
+    const data = await resp.json();
+    if (!resp.ok || !data.ok) { showHint(hint, data.error || 'Не удалось сохранить'); return; }
+    currentUser = data.user;
+    document.getElementById('userCardName').textContent = (data.user.name || 'НОВЫЙ КЛИЕНТ').toUpperCase();
+    showHint(hint, '✅ Профиль сохранён');
+    setTimeout(() => showHint(hint, ''), 2500);
+  } catch (e) {
+    showHint(hint, 'Ошибка сети');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Сохранить профиль';
+  }
+}
+
+// --- Выход / экран входа ---
+function showLogin() {
+  document.querySelector('.auth-section').classList.remove('hidden');
+  document.getElementById('dashboard').classList.add('hidden');
+  showStep('phoneStep');
+}
+
+function logout() {
+  clearToken();
+  currentUser = null;
+  currentPhone = null;
+  ['phoneNumber', 'verificationCode', 'userName'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  showLogin();
+}
+
+// --- Инициализация ---
+document.addEventListener('DOMContentLoaded', function () {
+  if (getToken()) {
+    loadDashboard();
+  } else {
+    showLogin();
   }
 });
     </script>
