@@ -45,6 +45,18 @@ export default async function handler(req, res) {
     .order('purchased_at', { ascending: false })
     .limit(50);
 
+  // Активный reward-код (если есть).
+  const { data: activeReward } = await supabase
+    .from('loyalty_rewards')
+    .select('code, value_somoni, status, created_at')
+    .eq('user_id', user.id)
+    .eq('status', 'active')
+    .order('created_at', { ascending: false })
+    .maybeSingle();
+
+  const REWARD_THRESHOLD = 100;
+  const points = user.points_balance || 0;
+
   return ok(res, {
     ok: true,
     user: {
@@ -53,9 +65,16 @@ export default async function handler(req, res) {
       name: user.name,
       phone: user.phone,
       discount_pct: user.discount_pct,
-      points_balance: user.points_balance,
+      points_balance: points,
       created_at: user.created_at,
     },
     purchases: purchases || [],
+    reward: {
+      threshold: REWARD_THRESHOLD,
+      points_to_reward: Math.max(0, REWARD_THRESHOLD - points),
+      can_claim: points >= REWARD_THRESHOLD && !activeReward,
+      active_code: activeReward ? activeReward.code : null,
+      active_value: activeReward ? activeReward.value_somoni : null,
+    },
   });
 }

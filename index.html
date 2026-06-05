@@ -1,454 +1,730 @@
-<!DOCTYPE html>
-<html lang="ru">
+<!doctype html>
+<html lang="ru" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ортосалон — Личный кабинет</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#f7e7db">
+  <title>Ортосалон · ORTO.CARDS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <style>
+    :root,
+    [data-theme="light"] {
+      --font-body: 'Manrope', sans-serif;
+      --text-xs: 0.75rem; --text-sm: 0.875rem; --text-base: 1rem; --text-lg: 1.125rem; --text-xl: 1.5rem;
+      --radius-full: 999px;
+      --color-bg: #f7e7db;
+      --color-surface: #fff7f2;
+      --color-surface-2: #fffaf6;
+      --color-border: rgba(33, 79, 87, 0.1);
+      --color-text: #234f58;
+      --color-text-muted: #607d83;
+      --color-text-faint: #9aaeb1;
+      --color-primary: #1596a3;
+      --color-primary-hover: #0f7782;
+      --color-primary-highlight: rgba(21, 150, 163, 0.1);
+      --color-orange: #f97a0b;
+      --color-orange-highlight: #ffe3cb;
+      --color-success: #2d8d5a;
+      --color-danger: #c0392b;
+      --shadow-sm: 0 3px 10px rgba(93, 76, 67, 0.08);
+      --shadow-md: 0 12px 30px rgba(93, 76, 67, 0.14);
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    [data-theme="dark"] {
+      --color-bg: #1d1a18;
+      --color-surface: #272320;
+      --color-surface-2: #2f2b27;
+      --color-border: rgba(255,255,255,0.08);
+      --color-text: #f5ece4;
+      --color-text-muted: #cfbfb1;
+      --color-text-faint: #9f9488;
+      --color-primary: #57b8c2;
+      --color-primary-hover: #75c6cf;
+      --color-primary-highlight: rgba(87, 184, 194, 0.14);
+      --color-orange: #ff9a3b;
+      --color-orange-highlight: rgba(255, 154, 59, 0.12);
+      --color-success: #55c185;
+      --color-danger: #ff7a6b;
+      --shadow-sm: 0 4px 10px rgba(0,0,0,0.18);
+      --shadow-md: 0 16px 32px rgba(0,0,0,0.3);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: none; text-size-adjust: none; scroll-behavior: smooth; }
+    body {
+      margin: 0; min-height: 100dvh; font-family: var(--font-body); font-size: var(--text-base);
+      color: var(--color-text);
+      background:
+        radial-gradient(circle at top left, rgba(255, 191, 162, 0.95) 0 20%, transparent 21%),
+        radial-gradient(circle at 85% 16%, rgba(255, 222, 200, 0.88) 0 16%, transparent 17%),
+        radial-gradient(circle at 70% 76%, rgba(245, 202, 177, 0.72) 0 18%, transparent 19%),
+        linear-gradient(180deg, var(--color-bg) 0%, color-mix(in srgb, var(--color-bg) 95%, #fff 5%) 100%);
+      line-height: 1.5; display: flex; justify-content: center;
+    }
+    img, svg { display: block; max-width: 100%; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; border: 0; }
+    a { color: inherit; }
+    :focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; border-radius: 12px; }
+    .app-shell {
+      width: 100%; max-width: 430px; min-height: 100dvh;
+      padding: calc(var(--safe-top) + 14px) 16px calc(var(--safe-bottom) + 22px); position: relative;
+    }
+    header {
+      position: sticky; top: 0; z-index: 30; padding-bottom: 8px; backdrop-filter: blur(16px);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--color-bg) 95%, transparent) 0%, color-mix(in srgb, var(--color-bg) 82%, transparent) 68%, transparent 100%);
+    }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-size: var(--text-sm); font-weight: 800; letter-spacing: 0.04em; color: var(--color-text); }
+    .brand-logo { width: 36px; height: 36px; color: var(--color-primary); filter: drop-shadow(0 6px 12px rgba(21,150,163,0.18)); }
+    .top-actions { display: flex; align-items: center; gap: 8px; }
+    .ghost-icon, .theme-toggle {
+      min-width: 44px; min-height: 44px; border-radius: 16px;
+      background: color-mix(in srgb, var(--color-surface) 82%, transparent);
+      color: var(--color-text); box-shadow: var(--shadow-sm); display: grid; place-items: center;
+    }
+    .ghost-icon svg, .theme-toggle svg { width: 20px; height: 20px; }
+    .tab-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+    .tab-row::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      min-height: 44px; padding: 11px 14px; border-radius: var(--radius-full); white-space: nowrap;
+      background: color-mix(in srgb, var(--color-surface) 80%, transparent); color: var(--color-text-muted);
+      font-size: var(--text-sm); font-weight: 800; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-text) 8%, transparent);
+    }
+    .tab-btn.active { color: white; background: var(--color-primary); box-shadow: none; }
+    main { padding-top: 12px; display: grid; gap: 16px; }
+    .screen { display: none; gap: 16px; }
+    .screen.active { display: grid; }
+    .hero-card {
+      background: linear-gradient(160deg, #1aa1ae 0%, #106f7b 100%); color: white; border-radius: 30px;
+      padding: 20px; position: relative; overflow: hidden; box-shadow: 0 22px 50px rgba(17, 111, 123, 0.26);
+    }
+    .hero-card::before, .hero-card::after { content: ""; position: absolute; border-radius: 50%; background: rgba(255, 232, 216, 0.18); }
+    .hero-card::before { width: 220px; height: 220px; top: -90px; right: -76px; }
+    .hero-card::after { width: 180px; height: 180px; left: -44px; bottom: -90px; background: rgba(255, 195, 161, 0.14); }
+    .hero-card > * { position: relative; z-index: 1; }
+    .hero-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+    .eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.82; margin-bottom: 6px; }
+    .hero-name { font-size: 26px; font-weight: 800; line-height: 1.04; max-width: 210px; }
+    .discount-chip { min-width: 82px; background: var(--color-orange); border-radius: 22px; padding: 12px 10px; text-align: center; font-weight: 800; box-shadow: 0 10px 22px rgba(249,122,11,0.26); }
+    .discount-chip span { display: block; margin-top: 6px; font-size: 11px; line-height: 1.2; opacity: 0.92; }
+    .hero-bottom { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: end; margin-bottom: 16px; }
+    .hero-number { font-size: 15px; font-weight: 800; letter-spacing: 0.12em; margin-bottom: 6px; }
+    .hero-copy { font-size: 14px; opacity: 0.92; max-width: 220px; }
+    .points-box { min-width: 110px; padding: 12px; border-radius: 18px; background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.16); text-align: right; }
+    .points-box strong { display: block; font-size: 24px; line-height: 1; margin-bottom: 4px; }
+    .points-box span { font-size: 12px; opacity: 0.82; }
+    .barcode-panel { background: #fff8f4; border-radius: 22px; padding: 14px; color: #263a40; box-shadow: inset 0 0 0 1px rgba(33,79,87,0.06); }
+    .barcode-panel svg { width: 100%; height: 70px; }
+    .barcode-number { text-align: center; margin-top: 8px; font-size: 12px; font-weight: 800; letter-spacing: 0.24em; }
+    .card { background: color-mix(in srgb, var(--color-surface) 92%, transparent); border-radius: 28px; padding: 18px; box-shadow: var(--shadow-md); border: 1px solid color-mix(in srgb, var(--color-text) 6%, transparent); }
+    .section-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .section-head h1, .section-head h2, .section-head h3 { margin: 0; font-size: 20px; line-height: 1.15; }
+    .section-head p { margin: 4px 0 0; font-size: 13px; color: var(--color-text-muted); }
+    .pill { display: inline-flex; align-items: center; justify-content: center; min-height: 34px; padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 800; white-space: nowrap; }
+    .pill.orange { background: var(--color-orange-highlight); color: #a75a10; }
+    .pill.teal { background: var(--color-primary-highlight); color: var(--color-primary-hover); }
+    .reward-banner { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 16px; border-radius: 22px; background: linear-gradient(135deg, #fff0e2 0%, #ffe1c2 100%); box-shadow: inset 0 0 0 1px rgba(249,122,11,0.08); }
+    .reward-banner strong { display: block; color: #9a4b07; font-size: 18px; margin-bottom: 4px; }
+    .reward-banner p { margin: 0; color: #8d623a; font-size: 13px; line-height: 1.45; }
+    .button, .button-secondary { min-height: 46px; padding: 12px 16px; border-radius: 16px; font-weight: 800; font-size: var(--text-sm); }
+    .button { background: var(--color-orange); color: white; box-shadow: 0 10px 24px rgba(249,122,11,0.18); }
+    .button:disabled, .button-secondary:disabled { opacity: 0.6; cursor: default; }
+    .button-secondary { background: var(--color-primary); color: white; width: 100%; }
+    .stack { display: grid; gap: 12px; }
+    .history-item, .profile-row, .product-card, .reward-code-box, .login-card { background: var(--color-surface-2); border-radius: 20px; padding: 14px; border: 1px solid var(--color-border); }
+    .history-item-top, .product-card-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 8px; }
+    .history-item strong, .profile-row strong, .product-card strong { display: block; }
+    .history-item p, .profile-row p, .product-card p, .login-card p, .reward-code-box p { margin: 4px 0 0; color: var(--color-text-muted); font-size: 13px; line-height: 1.45; }
+    .history-amount { background: var(--color-primary-highlight); color: var(--color-primary-hover); padding: 8px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; white-space: nowrap; }
+    .history-balance { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .mini-badge { display: inline-flex; align-items: center; gap: 6px; padding: 7px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: color-mix(in srgb, var(--color-primary) 10%, white 90%); color: var(--color-primary-hover); }
+    .mini-badge.orange { background: color-mix(in srgb, var(--color-orange) 14%, white 86%); color: #ab5b10; }
+    .profile-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .profile-icon { width: 44px; height: 44px; border-radius: 16px; background: var(--color-primary-highlight); color: var(--color-primary-hover); display: grid; place-items: center; flex-shrink: 0; font-weight: 800; font-size: 18px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .chip { padding: 8px 12px; border-radius: 999px; background: var(--color-primary-highlight); color: var(--color-primary-hover); font-size: 12px; font-weight: 700; }
+    .product-visual { height: 110px; border-radius: 18px; position: relative; overflow: hidden; margin-bottom: 12px; display: grid; place-items: center; font-size: 44px; }
+    .product-visual::after { content: ""; position: absolute; width: 120px; height: 120px; right: -22px; top: -22px; border-radius: 50%; background: rgba(255,247,240,0.24); }
+    .product-actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 12px; }
+    .product-rank { font-weight: 800; font-size: 14px; color: var(--color-primary-hover); }
+    .reward-code-box { text-align: center; background: linear-gradient(180deg, color-mix(in srgb, var(--color-surface) 96%, transparent) 0%, color-mix(in srgb, var(--color-orange-highlight) 50%, white 50%) 100%); }
+    .reward-qr { width: 150px; height: 150px; margin: 14px auto 12px; background: white; border-radius: 16px; padding: 8px; box-shadow: var(--shadow-sm); }
+    .reward-qr svg { width: 100%; height: 100%; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .metric { background: var(--color-surface-2); border-radius: 20px; padding: 14px; border: 1px solid var(--color-border); }
+    .metric span { font-size: 12px; color: var(--color-text-muted); display: block; margin-bottom: 6px; }
+    .metric strong { font-size: 22px; line-height: 1; }
+    .login-card h2, .modal-card h2 { margin: 0 0 10px; font-size: 22px; line-height: 1.1; }
+    .form-field { margin-bottom: 12px; }
+    .form-field label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 700; color: var(--color-text); }
+    .phone-row { display: flex; gap: 8px; }
+    .input, .select {
+      width: 100%; min-height: 48px; padding: 12px 14px; border-radius: 16px; border: 1px solid var(--color-border);
+      background: color-mix(in srgb, var(--color-surface) 90%, transparent); color: var(--color-text);
+    }
+    .select { width: auto; min-width: 104px; font-weight: 700; }
+    .code-input { text-align: center; font-size: 24px; letter-spacing: 0.4em; font-weight: 800; }
+    .login-grid { display: grid; gap: 16px; }
+    .helper { font-size: 12px; color: var(--color-text-muted); margin-top: 8px; }
+    .msg { display: none; margin-top: 10px; padding: 10px 12px; border-radius: 12px; font-size: 13px; font-weight: 600; }
+    .msg.error { display: block; background: color-mix(in srgb, var(--color-danger) 12%, white 88%); color: var(--color-danger); }
+    .msg.hint { display: block; background: var(--color-primary-highlight); color: var(--color-primary-hover); }
+    .auth-only { display: none; }
+    .app-shell.is-authenticated .auth-only { display: grid; }
+    .app-shell.is-authenticated .guest-only { display: none; }
+    /* .screen видимостью управляет только .active (важнее правила .auth-only) */
+    .auth-only.screen { display: none; }
+    .app-shell.is-authenticated .auth-only.screen { display: none; }
+    .app-shell.is-authenticated .auth-only.screen.active { display: grid; }
+    .modal { position: fixed; inset: 0; background: rgba(25,20,17,0.42); display: none; align-items: end; justify-content: center; padding: 18px; z-index: 80; }
+    .modal.open { display: flex; }
+    .modal-card { width: min(430px, 100%); background: var(--color-surface); border-radius: 28px 28px 20px 20px; padding: 18px; box-shadow: var(--shadow-md); }
+    .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+    .outline-btn { min-height: 46px; border-radius: 16px; background: transparent; color: var(--color-text); border: 1px solid var(--color-border); font-weight: 800; }
+    .inline-note { margin-top: 10px; font-size: 12px; color: var(--color-text-muted); }
+    .empty-note { color: var(--color-text-muted); font-size: 14px; text-align: center; padding: 8px 0; }
+    .footer-space { height: 6px; }
+    @media (min-width: 431px) {
+      body { padding: 24px 0; }
+      .app-shell { min-height: calc(100vh - 48px); border-radius: 38px; overflow: hidden; box-shadow: 0 28px 60px rgba(78, 62, 53, 0.18); }
+      .modal { align-items: center; }
+      .modal-card { border-radius: 28px; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- ФОРМА АВТОРИЗАЦИИ -->
-        <div class="auth-section">
-            <!-- ШАГ 1: ВВОД ТЕЛЕФОНА -->
-            <div id="phoneStep" class="auth-step active">
-                <div class="auth-header">
-                    <h1>Ортосалон</h1>
-                </div>
-
-                <div class="auth-content">
-                    <div class="auth-icon">📱</div>
-                    <h2>Вход</h2>
-                    <p class="auth-subtitle">Введите номер телефона для входа</p>
-
-                    <div id="phoneError" class="error-message"></div>
-
-                    <div class="input-group">
-                        <label>Номер телефона</label>
-                        <div class="phone-input-wrapper">
-                            <select id="countryCode" class="country-code">
-                                <option value="+992">🇹🇯 +992</option>
-                                <option value="+7">🇷🇺 +7</option>
-                                <option value="+998">🇺🇿 +998</option>
-                            </select>
-                            <input
-                                type="tel"
-                                id="phoneNumber"
-                                placeholder="(XX) XXX-XX-XX"
-                                inputmode="numeric"
-                            >
-                        </div>
-                    </div>
-
-                    <button class="btn-primary" id="sendCodeBtn" onclick="sendVerificationCode()">
-                        Получить код
-                    </button>
-                </div>
-            </div>
-
-            <!-- ШАГ 2: ПРОВЕРКА КОДА -->
-            <div id="codeStep" class="auth-step">
-                <div class="auth-header">
-                    <div class="back-btn" onclick="backToPhone()">←</div>
-                    <h1>Подтверждение</h1>
-                    <div style="width: 40px;"></div>
-                </div>
-
-                <div class="auth-content">
-                    <div class="auth-icon">📨</div>
-                    <h2>Проверка кода</h2>
-                    <p class="auth-subtitle" id="sentToNumber">Код отправлен на номер</p>
-
-                    <div id="codeError" class="error-message"></div>
-                    <div id="codeHint" class="hint-message"></div>
-
-                    <div class="input-group">
-                        <label>Код из SMS (6 цифр)</label>
-                        <input
-                            type="text"
-                            id="verificationCode"
-                            class="code-input"
-                            placeholder="000000"
-                            maxlength="6"
-                            inputmode="numeric"
-                        >
-                    </div>
-
-                    <button class="btn-primary" id="verifyBtn" onclick="verifyCode()">
-                        Подтвердить
-                    </button>
-
-                    <p class="auth-subtitle" style="margin-top: 24px;">
-                        Не получили код? Проверьте спам или запросите повторно
-                    </p>
-                </div>
-            </div>
+  <div class="app-shell" id="appShell">
+    <header>
+      <div class="topbar">
+        <div class="brand" aria-label="ORTO.CARDS">
+          <svg class="brand-logo" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+            <rect x="4" y="4" width="40" height="40" rx="14" fill="currentColor"></rect>
+            <path d="M16 24h16" stroke="white" stroke-width="4" stroke-linecap="round"></path>
+            <path d="M24 16v16" stroke="white" stroke-width="4" stroke-linecap="round"></path>
+          </svg>
+          <span>ORTO.CARDS</span>
         </div>
-
-        <!-- ЛИЧНЫЙ КАБИНЕТ -->
-        <div id="dashboard" class="dashboard hidden">
-            <div class="dashboard-header">
-                <div class="header-left">
-                    <h1>Личный кабинет</h1>
-                </div>
-                <button class="icon-logout" onclick="logout()" title="Выйти">⏻</button>
-            </div>
-
-            <!-- ВИРТУАЛЬНАЯ КАРТА -->
-            <div class="virtual-card">
-                <div class="card-gradient">
-                    <div class="card-pattern"></div>
-                    <div class="card-content">
-                        <div class="card-header">
-                            <div class="card-logo">Ортосалон</div>
-                            <div class="card-chip">🔷</div>
-                        </div>
-
-                        <div class="card-info">
-                            <div class="card-number" id="userEAN">0000 0000 0000 0000</div>
-
-                            <div class="card-bottom-row">
-                                <div class="card-holder">
-                                    <div class="card-holder-label">Владелец карты</div>
-                                    <div class="card-holder-name" id="userCardName">НОВЫЙ КЛИЕНТ</div>
-                                </div>
-                                <div class="card-points">
-                                    <div class="card-points-label">Бонусы</div>
-                                    <div class="card-points-value" id="cardPoints">0</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- СВОДКА: БОНУСЫ И СКИДКА -->
-            <div class="stats-grid">
-                <div class="stat-card stat-points">
-                    <div class="stat-icon">⭐</div>
-                    <div class="stat-value" id="statPoints">0</div>
-                    <div class="stat-label">Бонусов на счёте</div>
-                </div>
-                <div class="stat-card stat-discount">
-                    <div class="stat-icon">🏷️</div>
-                    <div class="stat-value" id="statDiscount">0%</div>
-                    <div class="stat-label">Ваша скидка</div>
-                </div>
-            </div>
-
-            <!-- ШТРИХКОД -->
-            <div class="barcode-section">
-                <h3 class="section-title">Штрихкод карты</h3>
-                <p class="section-subtitle">Покажите консультанту для начисления бонусов и скидки</p>
-
-                <div class="barcode-wrapper">
-                    <div class="barcode-container">
-                        <svg id="barcodeDisplay" style="max-width: 100%; height: auto;"></svg>
-                    </div>
-                    <div class="barcode-number" id="barcodeNumber">0000000000000</div>
-                </div>
-            </div>
-
-            <!-- ИСТОРИЯ ПОКУПОК -->
-            <div class="history-section">
-                <h3 class="section-title">🧾 История покупок</h3>
-                <div id="historyEmpty" class="history-empty">Пока нет покупок. Совершите покупку от 150 сомони — и получите +20 бонусов.</div>
-                <div id="historyList" class="history-list"></div>
-            </div>
-
-            <!-- ПРОФИЛЬ -->
-            <div class="profile-section">
-                <h3 class="section-title">👤 Мой профиль</h3>
-
-                <div class="profile-info">
-                    <div class="info-row">
-                        <label>Телефон</label>
-                        <input type="tel" id="userPhone" readonly>
-                    </div>
-
-                    <div class="info-row">
-                        <label>Имя</label>
-                        <input type="text" id="userName" placeholder="Введите ваше имя">
-                    </div>
-
-                    <button class="btn-primary" id="saveProfileBtn" onclick="saveProfile()">
-                        Сохранить профиль
-                    </button>
-                    <div id="profileHint" class="hint-message"></div>
-                </div>
-            </div>
-
-            <!-- КНОПКА ВЫХОДА -->
-            <button class="btn-logout" onclick="logout()">
-                Выйти из аккаунта
-            </button>
+        <div class="top-actions">
+          <button class="ghost-icon auth-only" type="button" id="logoutBtn" aria-label="Выйти" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          </button>
+          <button class="theme-toggle" type="button" id="themeToggle" aria-label="Переключить тему">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          </button>
         </div>
+      </div>
+
+      <nav class="tab-row auth-only" aria-label="Основные вкладки">
+        <button class="tab-btn active" data-tab="home">Главная</button>
+        <button class="tab-btn" data-tab="profile">Мой профиль</button>
+        <button class="tab-btn" data-tab="purchases">Мои покупки</button>
+        <button class="tab-btn" data-tab="family">Топ-10 товаров</button>
+      </nav>
+    </header>
+
+    <main id="content">
+      <!-- ===================== ПРИВЕТСТВЕННАЯ / ВХОД ===================== -->
+      <section class="guest-only screen active" id="screen-welcome" aria-label="Вход">
+        <article class="hero-card">
+          <div class="hero-top">
+            <div>
+              <div class="eyebrow">Виртуальная карта лояльности</div>
+              <div class="hero-name">Скидка, баллы и награды в одном кабинете</div>
+            </div>
+            <div class="discount-chip">-10%<span>по карте</span></div>
+          </div>
+          <div class="hero-copy">Войдите по номеру телефона, получите персональный штрихкод и копите баллы за покупки от 150 сомони.</div>
+        </article>
+
+        <section class="login-grid">
+          <article class="login-card">
+            <!-- Шаг 1: телефон -->
+            <div id="phoneStep">
+              <h2>Вход по телефону</h2>
+              <p>Введите номер — мы отправим SMS с кодом подтверждения.</p>
+              <div class="form-field">
+                <label for="phoneInput">Номер телефона</label>
+                <div class="phone-row">
+                  <select class="select" id="countryCode">
+                    <option value="+992">🇹🇯 +992</option>
+                    <option value="+7">🇷🇺 +7</option>
+                    <option value="+998">🇺🇿 +998</option>
+                  </select>
+                  <input class="input" id="phoneInput" type="tel" inputmode="numeric" placeholder="XX XXX XX XX">
+                </div>
+              </div>
+              <button class="button-secondary" type="button" id="sendCodeBtn">Получить код</button>
+              <div class="msg" id="phoneMsg"></div>
+            </div>
+
+            <!-- Шаг 2: код -->
+            <div id="codeStep" style="display:none;">
+              <h2>Подтверждение</h2>
+              <p id="sentToText">Введите 6-значный код из SMS.</p>
+              <div class="form-field">
+                <label for="codeInput">Код из SMS</label>
+                <input class="input code-input" id="codeInput" type="text" inputmode="numeric" maxlength="6" placeholder="000000">
+              </div>
+              <button class="button-secondary" type="button" id="verifyBtn">Подтвердить</button>
+              <div class="msg" id="codeMsg"></div>
+              <div class="helper"><a href="#" id="backToPhone">← Изменить номер</a></div>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="section-head"><div><h2>Что умеет приложение</h2><p>mobile-first кабинет клиента orto.cards</p></div></div>
+            <div class="stack">
+              <div class="history-item"><strong>Штрихкод карты и скидка 10%</strong><p>Сканируется на кассе, покупка из 1С уходит в loyalty-backend для расчёта баллов.</p></div>
+              <div class="history-item"><strong>Начисление баллов</strong><p>За чек от 150 сомони клиент получает +20 баллов и видит новый баланс в кабинете.</p></div>
+              <div class="history-item"><strong>Награда на 100 баллов</strong><p>После накопления порога появляется одноразовый reward-код на 100 сомони.</p></div>
+            </div>
+          </article>
+        </section>
+      </section>
+
+      <!-- ===================== ГЛАВНАЯ ===================== -->
+      <section class="screen auth-only" id="screen-home" aria-label="Главная">
+        <article class="hero-card">
+          <div class="hero-top">
+            <div>
+              <div class="eyebrow">Виртуальная карта</div>
+              <div class="hero-name" id="customerName">Клиент</div>
+            </div>
+            <div class="discount-chip"><span id="discountValue">-10%</span><span>активно</span></div>
+          </div>
+          <div class="hero-bottom">
+            <div>
+              <div class="hero-number" id="heroCardNumber">0000 0000 0000 0</div>
+              <div class="hero-copy">Покажите штрихкод на кассе, чтобы получить скидку и зафиксировать покупку.</div>
+            </div>
+            <div class="points-box">
+              <strong id="pointsValue">0</strong>
+              <span>баллов сейчас</span>
+            </div>
+          </div>
+          <div class="barcode-panel" aria-label="Штрихкод карты">
+            <svg id="heroBarcode"></svg>
+            <div class="barcode-number" id="heroBarcodeNumber">0000000000000</div>
+          </div>
+        </article>
+
+        <section class="grid-2">
+          <article class="metric"><span>До reward-кода</span><strong id="pointsToReward">100</strong></article>
+          <article class="metric"><span>Покупок всего</span><strong id="purchaseCount">0</strong></article>
+        </section>
+
+        <section class="card">
+          <div class="section-head">
+            <div><h2>Награда</h2><p>одноразовый код на 100 сомони</p></div>
+            <span class="pill orange" id="rewardStatusPill">ещё 100 баллов</span>
+          </div>
+          <div class="reward-banner">
+            <div>
+              <strong>100 баллов = 100 сомони</strong>
+              <p id="rewardDescription">Когда баланс достигнет 100 баллов, здесь откроется кнопка для получения одноразового штрихкода награды.</p>
+            </div>
+            <button class="button" type="button" id="rewardButton" disabled>Недоступно</button>
+          </div>
+          <div class="inline-note">Reward-код одноразовый: после погашения на кассе в 1С он закрывается автоматически.</div>
+        </section>
+
+        <section class="card">
+          <div class="section-head">
+            <div><h2>Последние покупки</h2><p>товар, сумма, дата и начисление</p></div>
+            <span class="pill teal" id="latestCountPill">0 записей</span>
+          </div>
+          <div class="stack" id="latestPurchases"><div class="empty-note">Пока нет покупок.</div></div>
+        </section>
+      </section>
+
+      <!-- ===================== ПРОФИЛЬ ===================== -->
+      <section class="screen auth-only" id="screen-profile" aria-label="Мой профиль">
+        <section class="card">
+          <div class="section-head"><div><h2>Мой профиль</h2><p>данные карты лояльности</p></div></div>
+          <div class="stack">
+            <div class="profile-row">
+              <div><strong>Телефон</strong><p id="profilePhone">—</p></div>
+              <div class="profile-icon">☎</div>
+            </div>
+            <div class="profile-row">
+              <div style="flex:1;">
+                <strong>Имя</strong>
+                <input class="input" id="profileNameInput" type="text" placeholder="Введите ваше имя" style="margin-top:6px;">
+              </div>
+            </div>
+            <div class="profile-row">
+              <div><strong>Штрихкод карты</strong><p id="profileEan">—</p></div>
+              <div class="profile-icon">🎫</div>
+            </div>
+            <div class="profile-row">
+              <div><strong>Скидка по карте</strong><p id="profileDiscount">—</p></div>
+              <div class="profile-icon">🏷️</div>
+            </div>
+            <button class="button-secondary" type="button" id="saveProfileBtn">Сохранить профиль</button>
+            <div class="msg" id="profileMsg"></div>
+          </div>
+        </section>
+        <button class="outline-btn" type="button" id="logoutBtn2">Выйти из аккаунта</button>
+      </section>
+
+      <!-- ===================== ПОКУПКИ ===================== -->
+      <section class="screen auth-only" id="screen-purchases" aria-label="Мои покупки">
+        <section class="card">
+          <div class="section-head"><div><h2>Мои покупки</h2><p>товар, сумма, дата и начисление баллов</p></div><span class="pill teal">история</span></div>
+          <div class="stack" id="fullPurchases"><div class="empty-note">Пока нет покупок.</div></div>
+        </section>
+      </section>
+
+      <!-- ===================== ТОП-10 ТОВАРОВ ===================== -->
+      <section class="screen auth-only" id="screen-family" aria-label="Топ-10 товаров">
+        <section class="card">
+          <div class="section-head"><div><h2>Топ-10 товаров</h2><p>самые популярные позиции салона</p></div><span class="pill orange">популярное</span></div>
+          <div class="stack" id="topProducts"><div class="empty-note">Загрузка…</div></div>
+        </section>
+      </section>
+
+      <div class="footer-space"></div>
+    </main>
+  </div>
+
+  <!-- МОДАЛКА REWARD -->
+  <div class="modal" id="rewardModal" aria-hidden="true">
+    <div class="modal-card">
+      <h2>Одноразовый reward-код</h2>
+      <p>Покажите этот штрихкод на кассе для списания <strong id="rewardModalValue">100</strong> сомони. После сканирования код закрывается автоматически.</p>
+      <div class="reward-code-box">
+        <div class="reward-qr"><svg id="rewardBarcode"></svg></div>
+        <strong id="rewardCodeText">—</strong>
+        <p>Действует один раз.</p>
+      </div>
+      <div class="modal-actions">
+        <button class="outline-btn" type="button" id="closeRewardModal">Закрыть</button>
+        <button class="button" type="button" id="claimRewardBtn">Получить код</button>
+      </div>
+      <div class="msg" id="rewardModalMsg"></div>
     </div>
+  </div>
 
-    <!-- JsBarcode для генерации штрихкода -->
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <script>
+    // ====== Без секретов на фронте. Вся логика — на сервере /api/. ======
+    const API = {
+      requestCode: '/api/auth/request-code',
+      verifyCode:  '/api/auth/verify-code',
+      me:          '/api/me',
+      rewards:     '/api/rewards',
+      topProducts: '/api/products/top',
+    };
+    const TOKEN_KEY = 'orto_session_token';
+    const getToken = () => localStorage.getItem(TOKEN_KEY);
+    const setToken = (t) => localStorage.setItem(TOKEN_KEY, t);
+    const clearToken = () => localStorage.removeItem(TOKEN_KEY);
 
-    <!-- ОСНОВНОЙ СКРИПТ -->
-    <script>
-// ============================================
-// Фронтенд НЕ содержит секретов: ни ключей Supabase, ни SMS-hash.
-// Вся логика входа, отправки SMS и проверки кода — на сервере /api/.
-// ============================================
+    const $ = (id) => document.getElementById(id);
+    const appShell = $('appShell');
+    let currentPhone = null;
+    let rewardCanClaim = false;
+    let activeRewardCode = null;
+    let activeRewardValue = 100;
 
-const API = {
-  requestCode: '/api/auth/request-code',
-  verifyCode:  '/api/auth/verify-code',
-  me:          '/api/me',
-};
-const TOKEN_KEY = 'orto_session_token';
-
-let currentUser = null;
-let currentPhone = null;   // в формате +992XXXXXXXXX
-
-// --- helpers ---
-function showError(el, message) {
-  if (!el) return;
-  el.textContent = message || '';
-  el.style.display = message ? 'block' : 'none';
-}
-function showHint(el, message) {
-  if (!el) return;
-  el.textContent = message || '';
-  el.style.display = message ? 'block' : 'none';
-}
-function getToken() { return localStorage.getItem(TOKEN_KEY); }
-function setToken(t) { localStorage.setItem(TOKEN_KEY, t); }
-function clearToken() { localStorage.removeItem(TOKEN_KEY); }
-
-function showStep(stepId) {
-  document.querySelectorAll('.auth-step').forEach(s => s.classList.remove('active'));
-  const step = document.getElementById(stepId);
-  if (step) step.classList.add('active');
-}
-
-function formatEAN(ean) {
-  if (!ean || ean.length < 13) return ean || '';
-  return ean.slice(0, 4) + ' ' + ean.slice(4, 8) + ' ' + ean.slice(8, 12) + ' ' + ean.slice(12);
-}
-
-function fmtMoney(n) {
-  const v = Number(n) || 0;
-  return v.toLocaleString('ru-RU', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + ' с.';
-}
-function fmtDate(iso) {
-  if (!iso) return '';
-  try {
-    return new Date(iso).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
-  } catch { return ''; }
-}
-
-// --- ШАГ 1: запрос кода ---
-async function sendVerificationCode() {
-  const countryCode = document.getElementById('countryCode').value;
-  const phoneNumber = document.getElementById('phoneNumber').value.trim();
-  const errorDiv = document.getElementById('phoneError');
-  const btn = document.getElementById('sendCodeBtn');
-
-  showError(errorDiv, '');
-  if (!phoneNumber) {
-    showError(errorDiv, 'Введите номер телефона');
-    return;
-  }
-
-  // Собираем полный номер. Локальный 9-значный для +992 → 992XXXXXXXXX.
-  let digits = phoneNumber.replace(/\D/g, '');
-  currentPhone = countryCode + digits;
-
-  btn.disabled = true;
-  btn.textContent = 'Отправка...';
-  try {
-    const resp = await fetch(API.requestCode, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone: currentPhone }),
-    });
-    const data = await resp.json();
-    if (!resp.ok || !data.ok) {
-      showError(errorDiv, data.error || 'Не удалось отправить код. Попробуйте позже.');
-      return;
+    // --- сообщения ---
+    function setMsg(el, text, type) {
+      el.className = 'msg' + (text ? ' ' + (type || 'hint') : '');
+      el.textContent = text || '';
     }
-    document.getElementById('sentToNumber').textContent = `Код отправлен на номер ${currentPhone}`;
-    const hint = document.getElementById('codeHint');
-    // dev_code приходит только в тестовом режиме (SMS_PROVIDER=dev).
-    if (data.dev_code) showHint(hint, `Тестовый режим. Код: ${data.dev_code}`);
-    else showHint(hint, '');
-    showError(document.getElementById('codeError'), '');
-    document.getElementById('verificationCode').value = '';
-    showStep('codeStep');
-  } catch (e) {
-    showError(errorDiv, 'Ошибка сети. Проверьте подключение.');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Получить код';
-  }
-}
 
-function backToPhone() {
-  showStep('phoneStep');
-}
-
-// --- ШАГ 2: проверка кода ---
-async function verifyCode() {
-  const enteredCode = document.getElementById('verificationCode').value.trim();
-  const errorDiv = document.getElementById('codeError');
-  const btn = document.getElementById('verifyBtn');
-
-  showError(errorDiv, '');
-  if (!enteredCode || enteredCode.length !== 6) {
-    showError(errorDiv, 'Введите 6-значный код');
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = 'Проверка...';
-  try {
-    const resp = await fetch(API.verifyCode, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone: currentPhone, code: enteredCode }),
-    });
-    const data = await resp.json();
-    if (!resp.ok || !data.ok) {
-      showError(errorDiv, data.error || 'Неверный код');
-      return;
+    // --- форматирование ---
+    function formatCardNumber(ean) {
+      if (!ean) return '0000 0000 0000 0';
+      return (ean.match(/.{1,4}/g) || []).join(' ');
     }
-    setToken(data.token);
-    currentUser = data.user;
-    await loadDashboard();
-  } catch (e) {
-    showError(errorDiv, 'Ошибка сети. Попробуйте ещё раз.');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Подтвердить';
-  }
-}
+    function fmtMoney(n) {
+      return (Number(n) || 0).toLocaleString('ru-RU') + ' c.';
+    }
+    function fmtDate(iso) {
+      if (!iso) return '';
+      try { return new Date(iso).toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' }); }
+      catch { return ''; }
+    }
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+    }
 
-// --- Загрузка кабинета (через /api/me с токеном) ---
-async function loadDashboard() {
-  const token = getToken();
-  if (!token) { showLogin(); return; }
+    // ====== ТЕМА ======
+    let theme = localStorage.getItem('orto_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+    $('themeToggle').addEventListener('click', () => {
+      theme = theme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('orto_theme', theme);
+    });
 
-  try {
-    const resp = await fetch(API.me, { headers: { Authorization: 'Bearer ' + token } });
-    if (resp.status === 401) { clearToken(); showLogin(); return; }
-    const data = await resp.json();
-    if (!resp.ok || !data.ok) { clearToken(); showLogin(); return; }
-    currentUser = data.user;
-    renderDashboard(data.user, data.purchases || []);
-  } catch (e) {
-    showLogin();
-  }
-}
+    // ====== ВКЛАДКИ ======
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset.tab;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+        document.querySelectorAll('.auth-only.screen').forEach(s => s.classList.toggle('active', s.id === `screen-${tab}`));
+        if (tab === 'family') loadTopProducts();
+      });
+    });
 
-function renderDashboard(user, purchases) {
-  document.querySelector('.auth-section').classList.add('hidden');
-  document.getElementById('dashboard').classList.remove('hidden');
+    // ====== ШАГ 1: запрос кода ======
+    $('sendCodeBtn').addEventListener('click', async () => {
+      const cc = $('countryCode').value;
+      const num = $('phoneInput').value.replace(/\D/g, '');
+      const btn = $('sendCodeBtn');
+      setMsg($('phoneMsg'), '');
+      if (!num) { setMsg($('phoneMsg'), 'Введите номер телефона', 'error'); return; }
+      currentPhone = cc + num;
+      btn.disabled = true; btn.textContent = 'Отправка…';
+      try {
+        const r = await fetch(API.requestCode, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ phone: currentPhone }) });
+        const d = await r.json();
+        if (!r.ok || !d.ok) { setMsg($('phoneMsg'), d.error || 'Не удалось отправить код', 'error'); return; }
+        $('sentToText').textContent = `Код отправлен на номер ${currentPhone}`;
+        $('codeInput').value = '';
+        setMsg($('codeMsg'), d.dev_code ? `Тестовый режим. Код: ${d.dev_code}` : '', 'hint');
+        $('phoneStep').style.display = 'none';
+        $('codeStep').style.display = 'block';
+        $('codeInput').focus();
+      } catch { setMsg($('phoneMsg'), 'Ошибка сети', 'error'); }
+      finally { btn.disabled = false; btn.textContent = 'Получить код'; }
+    });
 
-  const ean = user.ean_code || '0000000000000';
-  document.getElementById('userPhone').value = user.phone || '';
-  document.getElementById('userName').value = user.name || '';
-  document.getElementById('userCardName').textContent = (user.name || 'НОВЫЙ КЛИЕНТ').toUpperCase();
-  document.getElementById('userEAN').textContent = formatEAN(ean);
-  document.getElementById('barcodeNumber').textContent = ean;
-  document.getElementById('cardPoints').textContent = user.points_balance ?? 0;
-  document.getElementById('statPoints').textContent = user.points_balance ?? 0;
-  document.getElementById('statDiscount').textContent = (Number(user.discount_pct) || 0) + '%';
+    $('backToPhone').addEventListener('click', (e) => {
+      e.preventDefault();
+      $('codeStep').style.display = 'none';
+      $('phoneStep').style.display = 'block';
+    });
 
-  try {
-    JsBarcode('#barcodeDisplay', ean, { format: 'EAN13', width: 2, height: 80, displayValue: false });
-  } catch (e) { console.error('Штрихкод:', e); }
+    // ====== ШАГ 2: проверка кода ======
+    $('verifyBtn').addEventListener('click', async () => {
+      const code = $('codeInput').value.replace(/\D/g, '');
+      const btn = $('verifyBtn');
+      setMsg($('codeMsg'), '');
+      if (code.length !== 6) { setMsg($('codeMsg'), 'Введите 6-значный код', 'error'); return; }
+      btn.disabled = true; btn.textContent = 'Проверка…';
+      try {
+        const r = await fetch(API.verifyCode, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ phone: currentPhone, code }) });
+        const d = await r.json();
+        if (!r.ok || !d.ok) { setMsg($('codeMsg'), d.error || 'Неверный код', 'error'); return; }
+        setToken(d.token);
+        await loadDashboard();
+      } catch { setMsg($('codeMsg'), 'Ошибка сети', 'error'); }
+      finally { btn.disabled = false; btn.textContent = 'Подтвердить'; }
+    });
 
-  // История покупок
-  const list = document.getElementById('historyList');
-  const empty = document.getElementById('historyEmpty');
-  list.innerHTML = '';
-  if (!purchases.length) {
-    empty.style.display = 'block';
-  } else {
-    empty.style.display = 'none';
-    purchases.forEach(p => {
-      const row = document.createElement('div');
-      row.className = 'history-item';
-      const bonus = p.bonus_awarded ? `<span class="history-bonus">+${p.bonus_awarded}⭐</span>` : '';
-      row.innerHTML = `
-        <div class="history-main">
-          <div class="history-name">${p.item_name ? escapeHtml(p.item_name) : 'Покупка'}</div>
-          <div class="history-date">${fmtDate(p.purchased_at)}${p.receipt_no ? ' · чек ' + escapeHtml(String(p.receipt_no)) : ''}</div>
-        </div>
-        <div class="history-right">
+    // ====== ЗАГРУЗКА КАБИНЕТА ======
+    async function loadDashboard() {
+      const token = getToken();
+      if (!token) { showLogin(); return; }
+      try {
+        const r = await fetch(API.me, { headers: { Authorization: 'Bearer ' + token } });
+        if (r.status === 401) { clearToken(); showLogin(); return; }
+        const d = await r.json();
+        if (!r.ok || !d.ok) { clearToken(); showLogin(); return; }
+        renderDashboard(d);
+      } catch { showLogin(); }
+    }
+
+    function renderDashboard(d) {
+      const u = d.user, rw = d.reward || {};
+      appShell.classList.add('is-authenticated');
+      $('logoutBtn').style.display = 'grid';
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === 'home'));
+      document.querySelectorAll('.auth-only.screen').forEach(s => s.classList.toggle('active', s.id === 'screen-home'));
+
+      const ean = u.ean_code || '0000000000000';
+      const name = u.name && u.name.trim() ? u.name : 'Клиент';
+      const discount = (Number(u.discount_pct) || 10);
+
+      $('customerName').textContent = name;
+      $('discountValue').textContent = '-' + discount + '%';
+      $('heroCardNumber').textContent = formatCardNumber(ean);
+      $('heroBarcodeNumber').textContent = ean;
+      $('pointsValue').textContent = u.points_balance ?? 0;
+      $('purchaseCount').textContent = (d.purchases || []).length;
+      $('pointsToReward').textContent = rw.points_to_reward ?? 100;
+
+      // профиль
+      $('profilePhone').textContent = u.phone || '—';
+      $('profileNameInput').value = u.name || '';
+      $('profileEan').textContent = ean;
+      $('profileDiscount').textContent = discount + '%';
+
+      try { JsBarcode('#heroBarcode', ean, { format:'EAN13', width:2, height:62, displayValue:false, background:'transparent', lineColor:'#1c1c1c' }); } catch(e){}
+
+      // reward
+      rewardCanClaim = !!rw.can_claim;
+      activeRewardCode = rw.active_code || null;
+      activeRewardValue = rw.active_value || 100;
+      const pill = $('rewardStatusPill'), rbtn = $('rewardButton'), rdesc = $('rewardDescription');
+      if (activeRewardCode) {
+        pill.textContent = 'код готов'; pill.className = 'pill teal';
+        rbtn.textContent = 'Показать код'; rbtn.disabled = false;
+        rdesc.textContent = 'У вас есть активный reward-код. Покажите его на кассе для списания.';
+      } else if (rewardCanClaim) {
+        pill.textContent = 'доступно'; pill.className = 'pill teal';
+        rbtn.textContent = 'Получить код'; rbtn.disabled = false;
+        rdesc.textContent = 'У вас 100+ баллов. Можно получить одноразовый reward-код на 100 сомони.';
+      } else {
+        pill.textContent = `ещё ${rw.points_to_reward ?? 100} баллов`; pill.className = 'pill orange';
+        rbtn.textContent = 'Недоступно'; rbtn.disabled = true;
+        rdesc.textContent = 'Когда баланс достигнет 100 баллов, откроется кнопка получения reward-кода.';
+      }
+
+      renderPurchases(d.purchases || []);
+    }
+
+    function purchaseItemHTML(p) {
+      const bonus = p.bonus_awarded
+        ? `<span class="mini-badge orange">+${p.bonus_awarded} баллов</span>`
+        : `<span class="mini-badge">без начисления</span>`;
+      return `<article class="history-item">
+        <div class="history-item-top">
+          <div><strong>${p.item_name ? escapeHtml(p.item_name) : 'Покупка'}</strong>
+          <p>${fmtDate(p.purchased_at)}${p.receipt_no ? ' · чек ' + escapeHtml(String(p.receipt_no)) : ''}</p></div>
           <div class="history-amount">${fmtMoney(p.amount)}</div>
-          ${bonus}
-        </div>`;
-      list.appendChild(row);
+        </div>
+        <div class="history-balance">${bonus}</div>
+      </article>`;
+    }
+
+    function renderPurchases(purchases) {
+      $('latestCountPill').textContent = purchases.length + (purchases.length === 1 ? ' запись' : ' записей');
+      const latest = $('latestPurchases'), full = $('fullPurchases');
+      if (!purchases.length) {
+        latest.innerHTML = '<div class="empty-note">Пока нет покупок. Совершите покупку от 150 сомони — получите +20 баллов.</div>';
+        full.innerHTML = '<div class="empty-note">Пока нет покупок.</div>';
+        return;
+      }
+      latest.innerHTML = purchases.slice(0, 3).map(purchaseItemHTML).join('');
+      full.innerHTML = purchases.map(purchaseItemHTML).join('');
+    }
+
+    // ====== REWARD ======
+    $('rewardButton').addEventListener('click', () => {
+      setMsg($('rewardModalMsg'), '');
+      $('rewardModalValue').textContent = activeRewardValue;
+      if (activeRewardCode) {
+        showRewardCode(activeRewardCode);
+        $('claimRewardBtn').style.display = 'none';
+      } else {
+        $('rewardCodeText').textContent = 'Нажмите «Получить код»';
+        $('rewardBarcode').innerHTML = '';
+        $('claimRewardBtn').style.display = 'block';
+      }
+      $('rewardModal').classList.add('open');
+      $('rewardModal').setAttribute('aria-hidden', 'false');
     });
-  }
-}
 
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
+    function showRewardCode(code) {
+      $('rewardCodeText').textContent = code;
+      try { JsBarcode('#rewardBarcode', code, { format:'CODE128', width:2, height:90, displayValue:false }); } catch(e){}
+    }
 
-// --- Сохранение профиля (PUT /api/me) ---
-async function saveProfile() {
-  const token = getToken();
-  if (!token) { showLogin(); return; }
-  const name = document.getElementById('userName').value.trim();
-  const btn = document.getElementById('saveProfileBtn');
-  const hint = document.getElementById('profileHint');
-  showHint(hint, '');
-  btn.disabled = true;
-  btn.textContent = 'Сохранение...';
-  try {
-    const resp = await fetch(API.me, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-      body: JSON.stringify({ name }),
+    $('claimRewardBtn').addEventListener('click', async () => {
+      const btn = $('claimRewardBtn');
+      btn.disabled = true; btn.textContent = 'Получение…';
+      try {
+        const r = await fetch(API.rewards, { method:'POST', headers:{ Authorization:'Bearer ' + getToken() } });
+        const d = await r.json();
+        if (!r.ok || !d.ok) { setMsg($('rewardModalMsg'), d.error || 'Не удалось получить код', 'error'); return; }
+        activeRewardCode = d.reward.code;
+        showRewardCode(d.reward.code);
+        btn.style.display = 'none';
+        setMsg($('rewardModalMsg'), 'Код получен. Баллы списаны.', 'hint');
+        loadDashboard();
+      } catch { setMsg($('rewardModalMsg'), 'Ошибка сети', 'error'); }
+      finally { btn.disabled = false; btn.textContent = 'Получить код'; }
     });
-    const data = await resp.json();
-    if (!resp.ok || !data.ok) { showHint(hint, data.error || 'Не удалось сохранить'); return; }
-    currentUser = data.user;
-    document.getElementById('userCardName').textContent = (data.user.name || 'НОВЫЙ КЛИЕНТ').toUpperCase();
-    showHint(hint, '✅ Профиль сохранён');
-    setTimeout(() => showHint(hint, ''), 2500);
-  } catch (e) {
-    showHint(hint, 'Ошибка сети');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Сохранить профиль';
-  }
-}
 
-// --- Выход / экран входа ---
-function showLogin() {
-  document.querySelector('.auth-section').classList.remove('hidden');
-  document.getElementById('dashboard').classList.add('hidden');
-  showStep('phoneStep');
-}
+    $('closeRewardModal').addEventListener('click', closeRewardModal);
+    $('rewardModal').addEventListener('click', e => { if (e.target === $('rewardModal')) closeRewardModal(); });
+    function closeRewardModal() {
+      $('rewardModal').classList.remove('open');
+      $('rewardModal').setAttribute('aria-hidden', 'true');
+    }
 
-function logout() {
-  clearToken();
-  currentUser = null;
-  currentPhone = null;
-  ['phoneNumber', 'verificationCode', 'userName'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
-  showLogin();
-}
+    // ====== ТОП-10 ТОВАРОВ ======
+    const PRODUCT_VISUALS = [
+      { icon:'👟', g:'linear-gradient(135deg,#7ad1d8 0%,#359daa 58%,#1a7d8b 100%)' },
+      { icon:'🦶', g:'linear-gradient(135deg,#ffd0a8 0%,#f9a86b 60%,#f97a0b 100%)' },
+      { icon:'🩹', g:'linear-gradient(135deg,#9bdce0 0%,#52b2bc 58%,#1f7b88 100%)' },
+      { icon:'🦵', g:'linear-gradient(135deg,#ffe1c2 0%,#ffb27a 60%,#e8843a 100%)' },
+      { icon:'🧦', g:'linear-gradient(135deg,#a7e0e4 0%,#5fbac4 60%,#2b8d99 100%)' },
+      { icon:'💺', g:'linear-gradient(135deg,#ffd6b0 0%,#f7a766 60%,#e07c2a 100%)' },
+    ];
+    let topLoaded = false;
+    async function loadTopProducts() {
+      if (topLoaded) return;
+      const box = $('topProducts');
+      try {
+        const r = await fetch(API.topProducts, { headers: { Authorization: 'Bearer ' + getToken() } });
+        const d = await r.json();
+        if (!r.ok || !d.ok || !(d.products || []).length) { box.innerHTML = '<div class="empty-note">Список товаров пуст.</div>'; return; }
+        box.innerHTML = d.products.map((p, i) => {
+          const v = PRODUCT_VISUALS[i % PRODUCT_VISUALS.length];
+          const popular = p.sales_count > 0 ? `<span class="pill orange">${p.sales_count} продаж</span>` : `<span class="pill teal">в наличии</span>`;
+          return `<article class="product-card">
+            <div class="product-visual" style="background:${v.g};" aria-hidden="true">${v.icon}</div>
+            <div class="product-card-top">
+              <div><strong>${escapeHtml(p.name)}</strong><p>Ортопедическая продукция салона</p></div>
+              ${popular}
+            </div>
+            <div class="product-actions"><div class="product-rank">№${i + 1} в топе</div></div>
+          </article>`;
+        }).join('');
+        topLoaded = true;
+      } catch { box.innerHTML = '<div class="empty-note">Не удалось загрузить товары.</div>'; }
+    }
 
-// --- Инициализация ---
-document.addEventListener('DOMContentLoaded', function () {
-  if (getToken()) {
-    loadDashboard();
-  } else {
-    showLogin();
-  }
-});
-    </script>
+    // ====== ПРОФИЛЬ ======
+    $('saveProfileBtn').addEventListener('click', async () => {
+      const name = $('profileNameInput').value.trim();
+      const btn = $('saveProfileBtn');
+      setMsg($('profileMsg'), '');
+      btn.disabled = true; btn.textContent = 'Сохранение…';
+      try {
+        const r = await fetch(API.me, { method:'PUT', headers:{'Content-Type':'application/json', Authorization:'Bearer '+getToken()}, body: JSON.stringify({ name }) });
+        const d = await r.json();
+        if (!r.ok || !d.ok) { setMsg($('profileMsg'), d.error || 'Не удалось сохранить', 'error'); return; }
+        $('customerName').textContent = d.user.name && d.user.name.trim() ? d.user.name : 'Клиент';
+        setMsg($('profileMsg'), '✅ Профиль сохранён', 'hint');
+        setTimeout(() => setMsg($('profileMsg'), ''), 2500);
+      } catch { setMsg($('profileMsg'), 'Ошибка сети', 'error'); }
+      finally { btn.disabled = false; btn.textContent = 'Сохранить профиль'; }
+    });
+
+    // ====== ВЫХОД ======
+    function logout() {
+      clearToken();
+      appShell.classList.remove('is-authenticated');
+      $('logoutBtn').style.display = 'none';
+      currentPhone = null; topLoaded = false;
+      ['phoneInput','codeInput','profileNameInput'].forEach(id => { const el = $(id); if (el) el.value=''; });
+      $('codeStep').style.display = 'none';
+      $('phoneStep').style.display = 'block';
+      showLogin();
+    }
+    $('logoutBtn').addEventListener('click', logout);
+    $('logoutBtn2').addEventListener('click', logout);
+
+    function showLogin() {
+      appShell.classList.remove('is-authenticated');
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      $('screen-welcome').classList.add('active');
+    }
+
+    // ====== ИНИЦИАЛИЗАЦИЯ ======
+    if (getToken()) loadDashboard(); else showLogin();
+  </script>
 </body>
 </html>

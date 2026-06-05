@@ -23,6 +23,18 @@ export default async function handler(req, res) {
   if (got !== expected) return fail(res, 401, 'Неверный токен 1С');
 
   const body = await readJson(req);
+
+  // Режим погашения reward-кода на кассе: { redeem_code, c1_doc_ref }.
+  if (body.redeem_code) {
+    const { data, error } = await supabase.rpc('loyalty_redeem_reward', {
+      p_code: String(body.redeem_code).trim(),
+      p_c1_ref: body.c1_doc_ref || null,
+    });
+    if (error) return fail(res, 500, error.message);
+    if (!data?.ok) return fail(res, 400, data?.error || 'Не удалось погасить код');
+    return ok(res, { ok: true, result: data });
+  }
+
   const ean = (body.ean_code || '').toString().trim();
   const amount = Number(body.amount);
   if (!ean) return fail(res, 400, 'Не указан ean_code');
