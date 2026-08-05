@@ -8,6 +8,32 @@ import { normalizePhone } from '../_lib/sms.js';
 
 const MAX_ATTEMPTS = 5; // максимум попыток ввода на один код
 
+// Синхронизация новой карты в РМК (раздел «Дисконтная карта»).
+// Карта сразу появляется в кассе со скидкой 10%, штрихкод можно сканировать.
+// Неблокирующе: любая ошибка не ломает регистрацию клиента (ночная 1С-синхронизация — страховка).
+async function syncCardToRmk({ ean, name, phone }) {
+  const url = (process.env.RMK_SYNC_URL || 'https://1c-sync-barcodes.vercel.app/api/pos').trim();
+  const secret = (process.env.RMK_SYNC_SECRET || 'TySog2bN1bMJHsssoTvyCZO3IKOef1z0').trim();
+  if (!url || !secret || !ean) return;
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 6000);
+    const resp = await fetch(url + '?action=loyalty-card-upsert', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Provision-Secret': secret },
+      body: JSON.stringify({ ean, full_name: name || '', phone: phone || '' }),
+      signal: ctrl.signal,
+    });
+    clearTimeout(t);
+    const data = await resp.json().catch(() => ({}));
+    if (!resp.ok || !data.ok) {
+      console.warn('[rmk-sync] не удалось синхронизировать карту', ean, resp.status, data && data.error);
+    }
+  } catch (e) {
+    console.warn('[rmk-sync] ошибка вызова РМК', ean, (e && e.message) || e);
+  }
+}
+
 // Генерация валидного EAN-13 (12 случайных цифр + контрольная).
 function generateEAN13() {
   let code = '';
@@ -105,6 +131,9 @@ export default async function handler(req, res) {
       .single();
     if (insErr) return fail(res, 500, insErr.message);
     user = created;
+
+    // Новая карта → сразу создаём её в РМК (дисконтная карта, 10%).
+    await syncCardToRmk({ ean: user.ean_code, name: user.name, phone: user.phone });
   } else {
     // Существующий клиент — обновляем last_login.
     await supabase
